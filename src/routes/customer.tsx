@@ -21,16 +21,35 @@ import { useReverseGeocode } from "@/hooks/useReverseGeocode";
 import { speechLangCode, localizeItem } from "@/lib/inventoryI18n";
 import { getLang } from "@/lib/i18n";
 
-import { pageHead } from "@/lib/seo";
+import { pageHead, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/customer")({
-  head: () =>
-    pageHead({
+  head: () => ({
+    ...pageHead({
       title: "Browse village shops — VillageFinder",
       description:
         "Discover nearby shops, search inventory by voice in English, Telugu or Hindi, and order on WhatsApp.",
       path: "/customer",
     }),
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Browse village shops — VillageFinder",
+          description:
+            "Discover nearby shops, search inventory by voice in English, Telugu or Hindi, and order on WhatsApp.",
+          url: `${SITE_URL}/customer`,
+          isPartOf: {
+            "@type": "WebSite",
+            name: "VillageFinder",
+            url: `${SITE_URL}/`,
+          },
+        }),
+      },
+    ],
+  }),
   component: CustomerPage,
 });
 

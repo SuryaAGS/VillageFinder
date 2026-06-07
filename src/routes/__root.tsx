@@ -84,6 +84,16 @@ export const Route = createRootRoute({
           url: "https://suryaags.github.io/VillageFinder/",
         }),
       },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "VillageFinder",
+          url: "https://suryaags.github.io/VillageFinder/",
+          sameAs: [],
+        }),
+      },
     ],
   }),
   shellComponent: RootShell,
