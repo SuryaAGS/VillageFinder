@@ -79,7 +79,7 @@ function AdminDashboard() {
         setCounts({ customers, shopkeepers });
         setFeedback((fb as Feedback[]) ?? []);
       } catch (e) {
-        showFriendlyError(e, "Couldn't load admin data.");
+        showFriendlyError(e, t("loadAdminFailed"));
       } finally {
         if (mounted) setLoading(false);
       }
@@ -135,7 +135,7 @@ function AdminDashboard() {
           <div className="flex items-center gap-3">
             <ShieldCheck className="h-7 w-7 shrink-0" />
             <div className="min-w-0 flex-1">
-              <p className="text-sm opacity-90">Founder</p>
+              <p className="text-sm opacity-90">{t("founder")}</p>
               <p className="font-display text-2xl font-black truncate" title={user.email ?? undefined}>{user.email}</p>
             </div>
           </div>
@@ -170,7 +170,7 @@ function AdminDashboard() {
           </div>
         ) : feedback.length === 0 ? (
           <p className="mt-6 rounded-2xl border border-dashed border-border bg-card/50 p-6 text-center text-muted-foreground">
-            No feedback yet.
+            {t("noFeedbackYet")}
           </p>
         ) : (
           <ul className="mt-4 space-y-3">

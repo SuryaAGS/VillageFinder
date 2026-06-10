@@ -444,7 +444,7 @@ function ShopkeeperPage() {
 
         {items.filter((i) => !popular.some((p) => p.name === i.name)).length > 0 && (
           <section className="mt-8">
-            <h2 className="font-display text-xl font-bold">Other items</h2>
+            <h2 className="font-display text-xl font-bold">{t("otherItems")}</h2>
             <ul className="mt-3 space-y-2">
               {items
                 .filter((i) => !popular.some((p) => p.name === i.name))
@@ -489,7 +489,7 @@ function ShopkeeperPage() {
         <section className="mt-8 rounded-3xl border border-border bg-card p-5 shadow-soft">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <h2 className="font-display text-lg font-bold">Shop Status</h2>
+              <h2 className="font-display text-lg font-bold">{t("shopStatus")}</h2>
               <p className="text-sm text-muted-foreground">
                 {shop.is_open === false
                   ? "Customers see your shop as Temporarily Closed."
@@ -508,10 +508,10 @@ function ShopkeeperPage() {
         <section className="mt-12 rounded-3xl border-2 border-destructive/40 bg-destructive/5 p-5">
           <div className="flex items-center gap-2 text-destructive">
             <AlertTriangle className="h-5 w-5" />
-            <h2 className="font-display text-lg font-bold">Danger Zone</h2>
+            <h2 className="font-display text-lg font-bold">{t("dangerZone")}</h2>
           </div>
           <p className="mt-2 text-sm text-muted-foreground">
-            Permanently delete your shop, inventory, and all listings. This cannot be undone.
+            {t("deleteShopWarning")}
           </p>
           <button
             type="button"
@@ -522,7 +522,7 @@ function ShopkeeperPage() {
             className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-destructive px-4 py-3 font-bold text-destructive-foreground shadow-soft active:scale-[0.98]"
           >
             <Trash2 className="h-4 w-4" />
-            Permanently Delete Shop
+            {t("deleteShop")}
           </button>
         </section>
       </main>
@@ -553,7 +553,7 @@ function ShopkeeperPage() {
               disabled={deleting}
               className="rounded-2xl border border-border bg-card px-4 py-2.5 font-bold disabled:opacity-50"
             >
-              Cancel
+              {t("cancel")}
             </button>
             <button
               type="button"
@@ -563,7 +563,7 @@ function ShopkeeperPage() {
             >
               {deleting && <Loader2 className="h-4 w-4 animate-spin" />}
               <Trash2 className="h-4 w-4" />
-              Delete forever
+              {t("delete")}
             </button>
           </DialogFooter>
         </DialogContent>
@@ -575,13 +575,13 @@ function ShopkeeperPage() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete "{itemToDelete?.name}"?</AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteItemTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this item? This action cannot be undone.
+              {t("deleteItemBody")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deletingItem}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deletingItem}>{t("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
@@ -592,10 +592,10 @@ function ShopkeeperPage() {
             >
               {deletingItem ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Deleting…
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t("deleting")}
                 </>
               ) : (
-                "Delete"
+                t("delete")
               )}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -914,14 +914,14 @@ function VoiceModal({
 
         {transcript && (
           <div className="mt-5 rounded-2xl bg-muted px-4 py-3">
-            <p className="text-xs uppercase tracking-wider text-muted-foreground">You said</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">{t("youSaid")}</p>
             <p className="mt-1 font-semibold">{transcript}</p>
           </div>
         )}
 
         {parsed && (
           <div className="mt-3 rounded-2xl border-2 border-primary/40 bg-primary/5 p-4">
-            <p className="text-xs uppercase tracking-wider text-primary">Parsed</p>
+            <p className="text-xs uppercase tracking-wider text-primary">{t("parsed")}</p>
             <p className="mt-1 font-display text-lg font-bold">{parsed.name}</p>
             <p className="text-sm text-muted-foreground">
               {parsed.price ? `₹${parsed.price}` : "no price"}
@@ -1048,7 +1048,7 @@ function ScanModal({
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-md rounded-t-4xl bg-card p-6 shadow-warm sm:rounded-4xl"
       >
-        <h2 className="font-display text-xl font-bold">Scan barcode</h2>
+        <h2 className="font-display text-xl font-bold">{t("scanBarcode")}</h2>
 
         <div className="relative mt-4 aspect-video overflow-hidden rounded-2xl bg-foreground">
           <video ref={videoRef} playsInline muted className="h-full w-full object-cover" />

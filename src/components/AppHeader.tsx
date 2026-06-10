@@ -1,8 +1,14 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Globe, LogOut, Star, ShieldCheck, MapPin } from "lucide-react";
-import { PHONE_KEY, ROLE_KEY, t } from "@/lib/i18n";
+import { ArrowLeft, Globe, LogOut, Star, ShieldCheck, MapPin, Check } from "lucide-react";
+import { PHONE_KEY, ROLE_KEY, useT, useLang, setLang, LANGS, type Lang } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type Props = {
   back?: string;
@@ -14,6 +20,8 @@ type Props = {
 export function AppHeader({ back, title, showLogout, area }: Props) {
   const navigate = useNavigate();
   const { isAdmin, user } = useAuth();
+  const t = useT();
+  const lang = useLang();
   const logout = async () => {
     await supabase.auth.signOut();
     localStorage.removeItem(PHONE_KEY);
@@ -28,7 +36,7 @@ export function AppHeader({ back, title, showLogout, area }: Props) {
             <Link
               to={back}
               className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-muted"
-              aria-label="Back"
+              aria-label={t("back")}
             >
               <ArrowLeft className="h-5 w-5" />
             </Link>
@@ -66,18 +74,34 @@ export function AppHeader({ back, title, showLogout, area }: Props) {
               <Star className="h-5 w-5" />
             </Link>
           )}
-          <Link
-            to="/language"
-            className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-muted"
-            aria-label="Language"
-          >
-            <Globe className="h-5 w-5" />
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-muted"
+              aria-label={t("language")}
+            >
+              <Globe className="h-5 w-5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-[10rem]">
+              {LANGS.map((l) => (
+                <DropdownMenuItem
+                  key={l.code}
+                  onClick={() => setLang(l.code as Lang)}
+                  className="flex items-center justify-between gap-3"
+                >
+                  <span>
+                    <span className="font-medium">{l.native}</span>
+                    <span className="ml-2 text-xs text-muted-foreground">{l.english}</span>
+                  </span>
+                  {lang === l.code && <Check className="h-4 w-4 text-primary" />}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           {showLogout && (
             <button
               onClick={logout}
               className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-muted"
-              aria-label="Logout"
+              aria-label={t("logout")}
             >
               <LogOut className="h-5 w-5" />
             </button>

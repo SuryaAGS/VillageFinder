@@ -1,7 +1,9 @@
 import { Outlet, createRootRoute, HeadContent, Scripts, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Toaster } from "sonner";
 import { CartProvider } from "@/hooks/useCart";
 import { TopProgress } from "@/components/TopProgress";
+import { useLang } from "@/lib/i18n";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -116,10 +118,18 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  const lang = useLang();
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = lang;
+    }
+  }, [lang]);
   return (
     <CartProvider>
       <TopProgress />
-      <Outlet />
+      {/* `key={lang}` forces the entire app to re-render with fresh `t()` lookups
+          whenever the user switches language from any screen. */}
+      <Outlet key={lang} />
       <Toaster position="top-center" richColors closeButton />
     </CartProvider>
   );
