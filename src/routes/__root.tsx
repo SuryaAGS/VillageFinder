@@ -1,7 +1,9 @@
 import { Outlet, createRootRoute, HeadContent, Scripts, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Toaster } from "sonner";
 import { CartProvider } from "@/hooks/useCart";
 import { TopProgress } from "@/components/TopProgress";
+import { useLang } from "@/lib/i18n";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
