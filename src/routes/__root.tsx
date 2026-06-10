@@ -118,10 +118,18 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  const lang = useLang();
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = lang;
+    }
+  }, [lang]);
   return (
     <CartProvider>
       <TopProgress />
-      <Outlet />
+      {/* `key={lang}` forces the entire app to re-render with fresh `t()` lookups
+          whenever the user switches language from any screen. */}
+      <Outlet key={lang} />
       <Toaster position="top-center" richColors closeButton />
     </CartProvider>
   );
