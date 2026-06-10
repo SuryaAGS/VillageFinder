@@ -49,7 +49,7 @@ function FeedbackPage() {
       setDone(true);
       toast.success(t("thanksFeedback"));
     } catch (e) {
-      showFriendlyError(e, "Couldn't send feedback. Please try again.");
+      showFriendlyError(e, t("sendFeedbackFailed"));
     } finally {
       setSubmitting(false);
     }

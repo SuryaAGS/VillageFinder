@@ -37,7 +37,7 @@ export function LocationSheet({ open, loading, error, onAllow, onClose }: Props)
             <button
               type="button"
               onClick={onClose}
-              aria-label="Close"
+              aria-label={t("close")}
               className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full hover:bg-muted"
             >
               <X className="h-4 w-4" />
@@ -48,7 +48,7 @@ export function LocationSheet({ open, loading, error, onAllow, onClose }: Props)
             <h2 id="loc-sheet-title" className="mt-4 font-display text-2xl font-bold">
               {t("confirmLocation")}
             </h2>
-            <p className="sr-only">Confirm Your Location</p>
+            <p className="sr-only">{t("confirmLocation")}</p>
             <p className="mt-1 text-sm text-muted-foreground">{t("locSheetBody")}</p>
 
             {/* Permission banner */}
