@@ -1,4 +1,8 @@
-export type Lang = "en" | "hi" | "te";
+import { useSyncExternalStore } from "react";
+import { LOCALES, LANG_META, type LocaleCode, type TranslationKey } from "@/locales";
+
+export type Lang = LocaleCode;
+export type TKey = TranslationKey;
 
 export const LANG_KEY = "vf_lang";
 // kept for backward compat with any UI still referencing them
@@ -7,309 +11,69 @@ export const PHONE_KEY = "vf_phone";
 
 export type Role = "customer" | "shopkeeper";
 
-const dict = {
-  en: {
-    appName: "VillageFinder",
-    tagline: "Find shops, prices & stock in your village",
-    chooseLang: "Choose your language",
-    continue: "Continue",
-    emailTitle: "Sign in to VillageFinder",
-    emailHelp: "Use your email and a password",
-    emailPlaceholder: "you@example.com",
-    passwordPlaceholder: "Password (6+ characters)",
-    signIn: "Sign in",
-    signUp: "Create account",
-    haveAccount: "Already have an account? Sign in",
-    needAccount: "New here? Create an account",
-    chooseRole: "How will you use VillageFinder?",
-    customer: "I'm shopping",
-    customerDesc: "Find items in nearby shops",
-    shopkeeper: "I run a shop",
-    shopkeeperDesc: "Show your stock to villagers",
-    searchPlaceholder: "Search rice, soap, milk…",
-    noResults: "No shops currently have this in stock. Try searching for another item!",
-    welcomeToast: "Welcome to VillageFinder",
-    welcomeToastDesc: "Find shops, prices & stock in your village",
-    inStock: "In stock",
-    outOfStock: "Out of stock",
-    orderWhatsApp: "Order on WhatsApp",
-    lastUpdated: "Updated",
-    distanceAway: "away",
-    inventory: "My Inventory",
-    addItem: "Add item",
-    voiceAdd: "Voice add",
-    scan: "Scan",
-    popularItems: "Popular items",
-    listening: "Listening… speak now",
-    tapInStock: "Tap to mark in stock",
-    setupShop: "Set up your shop",
-    shopName: "Shop name",
-    village: "Village",
-    whatsappNumber: "WhatsApp number (10 digits)",
-    saveShop: "Save shop",
-    nearbyShops: "Nearby shops",
-    loading: "Loading…",
-    voiceSearch: "Tap mic and speak",
-    enableLocation: "Enable location",
-    updateLocation: "Update location",
-    sortNearest: "Nearest first",
-    sortRecent: "Recently updated",
-    showContact: "Show contact",
-    contactHidden: "Contact hidden — tap to reveal",
-    chooseArea: "Choose area",
-    allAreas: "All villages",
-    addToCart: "Add",
-    inCart: "In cart",
-    cart: "Your cart",
-    emptyCart: "Cart is empty",
-    sendOrderWa: "Send order on WhatsApp",
-    landmark: "Landmark",
-    landmarkPlaceholder: "e.g. Near Temple",
-    feedback: "Feedback",
-    rateApp: "Rate VillageFinder",
-    rateShop: "Rate this shop",
-    yourRating: "Your rating",
-    submit: "Submit",
-    thanksFeedback: "Thanks for your feedback!",
-    optionalComment: "Add a comment (optional)",
-    admin: "Admin dashboard",
-    totalCustomers: "Customers",
-    totalShopkeepers: "Shopkeepers",
-    allFeedback: "All feedback",
-    locSheetTitle: "Share your location",
-    locSheetBody: "We use it to show shops near you and accurate distances. We never share your location.",
-    locSheetAllow: "Use Current Location",
-    locSheetSkip: "Maybe later",
-    yourArea: "Your area",
-    getDirections: "Get directions",
-    forgotPassword: "Forgot password?",
-    sendResetLink: "Send reset link",
-    resetEmailSent: "Check your inbox for the reset link.",
-    setNewPassword: "Set a new password",
-    newPassword: "New password",
-    confirmPassword: "Confirm password",
-    passwordsDontMatch: "Passwords don't match",
-    passwordUpdated: "Password updated. You're signed in.",
-    backToSignIn: "Back to sign in",
-    confirmLocation: "Confirm Your Location",
-    locOff: "Location Access is Off",
-    locOffHelp: "Turn on GPS so we can show shops near you.",
-    grant: "GRANT",
-    locDenied: "GPS access denied. Showing shops based on your default village setting.",
-    radius10km: "Showing shops within 10 km",
-    registerShopLocation: "Register Shop Location",
-    updateShopLocation: "Update Shop Location",
-    locationSaved: "Shop location saved",
-    locationSaveFailed: "Couldn't save location. Please allow GPS and try again.",
-  },
-  hi: {
-    appName: "विलेजफाइंडर",
-    tagline: "अपने गाँव की दुकानें, दाम और स्टॉक देखें",
-    chooseLang: "अपनी भाषा चुनें",
-    continue: "आगे बढ़ें",
-    emailTitle: "विलेजफाइंडर में लॉगिन करें",
-    emailHelp: "ईमेल और पासवर्ड डालें",
-    emailPlaceholder: "you@example.com",
-    passwordPlaceholder: "पासवर्ड (6+ अक्षर)",
-    signIn: "लॉगिन",
-    signUp: "खाता बनाएँ",
-    haveAccount: "खाता है? लॉगिन करें",
-    needAccount: "नए हैं? खाता बनाएँ",
-    chooseRole: "आप कैसे इस्तेमाल करेंगे?",
-    customer: "मुझे सामान चाहिए",
-    customerDesc: "पास की दुकानों में खोजें",
-    shopkeeper: "मेरी दुकान है",
-    shopkeeperDesc: "गाँव वालों को स्टॉक दिखाएँ",
-    searchPlaceholder: "चावल, साबुन, दूध खोजें…",
-    noResults: "अभी किसी दुकान में यह स्टॉक में नहीं है। कोई दूसरा सामान खोजें!",
-    welcomeToast: "VillageFinder में आपका स्वागत है",
-    welcomeToastDesc: "अपने गाँव की दुकानें, दाम और स्टॉक खोजें",
-    inStock: "स्टॉक में है",
-    outOfStock: "खत्म है",
-    orderWhatsApp: "व्हाट्सएप पर ऑर्डर",
-    lastUpdated: "अपडेट",
-    distanceAway: "दूर",
-    inventory: "मेरा स्टॉक",
-    addItem: "सामान जोड़ें",
-    voiceAdd: "बोलकर जोड़ें",
-    scan: "स्कैन करें",
-    popularItems: "लोकप्रिय सामान",
-    listening: "सुन रहे हैं… अब बोलें",
-    tapInStock: "स्टॉक में मार्क करें",
-    setupShop: "अपनी दुकान सेट करें",
-    shopName: "दुकान का नाम",
-    village: "गाँव",
-    whatsappNumber: "व्हाट्सएप नंबर (10 अंक)",
-    saveShop: "दुकान सेव करें",
-    nearbyShops: "पास की दुकानें",
-    loading: "लोड हो रहा है…",
-    voiceSearch: "माइक दबाकर बोलें",
-    enableLocation: "लोकेशन चालू करें",
-    updateLocation: "लोकेशन अपडेट करें",
-    sortNearest: "नज़दीकी पहले",
-    sortRecent: "हाल में अपडेट",
-    showContact: "संपर्क दिखाएँ",
-    contactHidden: "संपर्क छुपा है — दिखाने के लिए दबाएँ",
-    chooseArea: "क्षेत्र चुनें",
-    allAreas: "सभी गाँव",
-    addToCart: "जोड़ें",
-    inCart: "कार्ट में",
-    cart: "आपका कार्ट",
-    emptyCart: "कार्ट खाली है",
-    sendOrderWa: "व्हाट्सएप पर ऑर्डर भेजें",
-    landmark: "पहचान",
-    landmarkPlaceholder: "जैसे: मंदिर के पास",
-    feedback: "फीडबैक",
-    rateApp: "ऐप को रेट करें",
-    rateShop: "दुकान को रेट करें",
-    yourRating: "आपकी रेटिंग",
-    submit: "भेजें",
-    thanksFeedback: "आपके फीडबैक के लिए धन्यवाद!",
-    optionalComment: "टिप्पणी जोड़ें (वैकल्पिक)",
-    admin: "एडमिन डैशबोर्ड",
-    totalCustomers: "ग्राहक",
-    totalShopkeepers: "दुकानदार",
-    allFeedback: "सभी फीडबैक",
-    locSheetTitle: "अपनी लोकेशन शेयर करें",
-    locSheetBody: "हम पास की दुकानें और सही दूरी दिखाने के लिए इसका उपयोग करते हैं।",
-    locSheetAllow: "वर्तमान लोकेशन का उपयोग करें",
-    locSheetSkip: "अभी नहीं",
-    yourArea: "आपका क्षेत्र",
-    getDirections: "रास्ता पाएँ",
-    forgotPassword: "पासवर्ड भूल गए?",
-    sendResetLink: "रीसेट लिंक भेजें",
-    resetEmailSent: "अपना ईमेल देखें — रीसेट लिंक भेज दिया है।",
-    setNewPassword: "नया पासवर्ड बनाएँ",
-    newPassword: "नया पासवर्ड",
-    confirmPassword: "पासवर्ड दोबारा डालें",
-    passwordsDontMatch: "पासवर्ड मेल नहीं खाते",
-    passwordUpdated: "पासवर्ड बदल दिया। आप लॉगिन हैं।",
-    backToSignIn: "लॉगिन पर वापस",
-    confirmLocation: "अपनी लोकेशन की पुष्टि करें",
-    locOff: "लोकेशन एक्सेस बंद है",
-    locOffHelp: "GPS चालू करें ताकि हम पास की दुकानें दिखा सकें।",
-    grant: "अनुमति दें",
-    locDenied: "GPS एक्सेस अस्वीकार। आपकी डिफ़ॉल्ट गाँव सेटिंग के आधार पर दुकानें दिखा रहे हैं।",
-    radius10km: "10 किमी के भीतर दुकानें",
-    registerShopLocation: "दुकान की लोकेशन रजिस्टर करें",
-    updateShopLocation: "दुकान की लोकेशन अपडेट करें",
-    locationSaved: "दुकान की लोकेशन सेव हो गई",
-    locationSaveFailed: "लोकेशन सेव नहीं हो सकी। GPS की अनुमति दें और पुनः प्रयास करें।",
-  },
-  te: {
-    appName: "విలేజ్‌ఫైండర్",
-    tagline: "మీ ఊరి దుకాణాలు, ధరలు, స్టాక్ చూడండి",
-    chooseLang: "మీ భాష ఎంచుకోండి",
-    continue: "కొనసాగించు",
-    emailTitle: "విలేజ్‌ఫైండర్‌లోకి సైన్ ఇన్",
-    emailHelp: "ఇమెయిల్ మరియు పాస్‌వర్డ్ ఇవ్వండి",
-    emailPlaceholder: "you@example.com",
-    passwordPlaceholder: "పాస్‌వర్డ్ (6+ అక్షరాలు)",
-    signIn: "సైన్ ఇన్",
-    signUp: "ఖాతా సృష్టించు",
-    haveAccount: "ఖాతా ఉందా? సైన్ ఇన్",
-    needAccount: "కొత్తవారా? ఖాతా సృష్టించు",
-    chooseRole: "మీరు ఎలా వాడతారు?",
-    customer: "నాకు సామాను కావాలి",
-    customerDesc: "దగ్గరి దుకాణాల్లో వెతుకు",
-    shopkeeper: "నాకు దుకాణం ఉంది",
-    shopkeeperDesc: "ఊరివారికి స్టాక్ చూపించు",
-    searchPlaceholder: "బియ్యం, సబ్బు, పాలు వెతుకు…",
-    noResults: "ఇప్పుడు ఏ దుకాణంలోనూ ఇది స్టాక్‌లో లేదు. వేరే వస్తువును ప్రయత్నించండి!",
-    welcomeToast: "VillageFinder కు స్వాగతం",
-    welcomeToastDesc: "మీ గ్రామంలోని దుకాణాలు, ధరలు & స్టాక్ కనుగొనండి",
-    inStock: "స్టాక్‌లో ఉంది",
-    outOfStock: "అయిపోయింది",
-    orderWhatsApp: "వాట్సాప్‌లో ఆర్డర్",
-    lastUpdated: "నవీకరణ",
-    distanceAway: "దూరం",
-    inventory: "నా స్టాక్",
-    addItem: "సామాను చేర్చు",
-    voiceAdd: "మాట్లాడి చేర్చు",
-    scan: "స్కాన్ చేయి",
-    popularItems: "ప్రాచుర్యం పొందిన వస్తువులు",
-    listening: "వింటున్నాం… ఇప్పుడు మాట్లాడండి",
-    tapInStock: "స్టాక్‌లో అని గుర్తించు",
-    setupShop: "మీ దుకాణాన్ని సెటప్ చేయండి",
-    shopName: "దుకాణం పేరు",
-    village: "ఊరు",
-    whatsappNumber: "వాట్సాప్ నంబర్ (10 అంకెలు)",
-    saveShop: "దుకాణం సేవ్ చేయి",
-    nearbyShops: "దగ్గరి దుకాణాలు",
-    loading: "లోడ్ అవుతోంది…",
-    voiceSearch: "మైక్ నొక్కి మాట్లాడండి",
-    enableLocation: "లొకేషన్ ఆన్ చేయండి",
-    updateLocation: "లొకేషన్ అప్‌డేట్ చేయండి",
-    sortNearest: "దగ్గరివి ముందు",
-    sortRecent: "ఇటీవల నవీకరించినవి",
-    showContact: "సంప్రదించండి",
-    contactHidden: "సంప్రదింపు దాగి ఉంది — చూపించడానికి నొక్కండి",
-    chooseArea: "ప్రాంతం ఎంచుకోండి",
-    allAreas: "అన్ని ఊర్లు",
-    addToCart: "చేర్చు",
-    inCart: "కార్ట్‌లో",
-    cart: "మీ కార్ట్",
-    emptyCart: "కార్ట్ ఖాళీగా ఉంది",
-    sendOrderWa: "వాట్సాప్‌లో ఆర్డర్ పంపండి",
-    landmark: "సమీప గుర్తు",
-    landmarkPlaceholder: "ఉదా: గుడి దగ్గర",
-    feedback: "ఫీడ్‌బ్యాక్",
-    rateApp: "యాప్‌ను రేట్ చేయండి",
-    rateShop: "దుకాణాన్ని రేట్ చేయండి",
-    yourRating: "మీ రేటింగ్",
-    submit: "పంపండి",
-    thanksFeedback: "మీ ఫీడ్‌బ్యాక్‌కు ధన్యవాదాలు!",
-    optionalComment: "వ్యాఖ్య చేర్చండి (ఐచ్ఛికం)",
-    admin: "అడ్మిన్ డాష్‌బోర్డ్",
-    totalCustomers: "కస్టమర్లు",
-    totalShopkeepers: "దుకాణదారులు",
-    allFeedback: "అన్ని ఫీడ్‌బ్యాక్‌లు",
-    locSheetTitle: "మీ లొకేషన్ షేర్ చేయండి",
-    locSheetBody: "దగ్గరి దుకాణాలను, సరైన దూరాన్ని చూపించడానికి దీన్ని ఉపయోగిస్తాం.",
-    locSheetAllow: "ప్రస్తుత లొకేషన్‌ను ఉపయోగించండి",
-    locSheetSkip: "తరువాత",
-    yourArea: "మీ ప్రాంతం",
-    getDirections: "దిశలు పొందండి",
-    forgotPassword: "పాస్‌వర్డ్ మర్చిపోయారా?",
-    sendResetLink: "రీసెట్ లింక్ పంపండి",
-    resetEmailSent: "మీ ఇమెయిల్ తనిఖీ చేయండి — లింక్ పంపాం.",
-    setNewPassword: "కొత్త పాస్‌వర్డ్ పెట్టండి",
-    newPassword: "కొత్త పాస్‌వర్డ్",
-    confirmPassword: "పాస్‌వర్డ్ మళ్ళీ ఇవ్వండి",
-    passwordsDontMatch: "పాస్‌వర్డ్‌లు సరిపోలడం లేదు",
-    passwordUpdated: "పాస్‌వర్డ్ నవీకరించబడింది. మీరు సైన్ ఇన్ అయ్యారు.",
-    backToSignIn: "సైన్ ఇన్‌కు తిరిగి",
-    confirmLocation: "మీ లొకేషన్‌ని నిర్ధారించండి",
-    locOff: "లొకేషన్ యాక్సెస్ ఆఫ్‌లో ఉంది",
-    locOffHelp: "GPS ఆన్ చేయండి, తద్వారా దగ్గరి దుకాణాలను చూపించగలం.",
-    grant: "అనుమతించు",
-    locDenied: "GPS యాక్సెస్ నిరాకరించబడింది. మీ డిఫాల్ట్ ఊరి సెట్టింగ్ ఆధారంగా దుకాణాలను చూపిస్తున్నాం.",
-    radius10km: "10 కి.మీ. లోపు దుకాణాలు",
-    registerShopLocation: "దుకాణ లొకేషన్ నమోదు చేయండి",
-    updateShopLocation: "దుకాణ లొకేషన్ నవీకరించండి",
-    locationSaved: "దుకాణ లొకేషన్ సేవ్ అయింది",
-    locationSaveFailed: "లొకేషన్ సేవ్ చేయలేకపోయాం. GPS అనుమతి ఇచ్చి మళ్ళీ ప్రయత్నించండి.",
-  },
-} as const;
-
-export type TKey = keyof (typeof dict)["en"];
+const LANG_EVENT = "vf:languagechange";
 
 export function getLang(): Lang {
   if (typeof window === "undefined") return "en";
-  return (localStorage.getItem(LANG_KEY) as Lang) || "en";
+  const stored = localStorage.getItem(LANG_KEY) as Lang | null;
+  if (stored && stored in LOCALES) return stored;
+  return "en";
 }
 
 export function setLang(l: Lang) {
+  if (typeof window === "undefined") return;
   localStorage.setItem(LANG_KEY, l);
+  document.documentElement.lang = l;
+  window.dispatchEvent(new CustomEvent(LANG_EVENT, { detail: l }));
 }
 
-export function t(key: TKey, lang?: Lang): string {
+/**
+ * Translate a key. Falls back to English, then to the key itself (with a
+ * dev warning) when a translation is missing.
+ */
+export function t(key: TKey | string, lang?: Lang): string {
   const l = lang || getLang();
-  return (dict[l] as Record<string, string>)[key] ?? (dict.en as Record<string, string>)[key];
+  const localized = (LOCALES[l] as Record<string, string>)[key as string];
+  if (localized != null) return localized;
+  const english = (LOCALES.en as Record<string, string>)[key as string];
+  if (english != null) return english;
+  if (typeof process !== "undefined" && process.env?.NODE_ENV !== "production") {
+    // eslint-disable-next-line no-console
+    console.warn(`[i18n] Missing translation key: "${key}"`);
+  }
+  return key as string;
 }
 
-export const LANGS: { code: Lang; native: string; english: string }[] = [
-  { code: "te", native: "తెలుగు", english: "Telugu" },
-  { code: "hi", native: "हिन्दी", english: "Hindi" },
-  { code: "en", native: "English", english: "English" },
-];
+// ---- React hooks (reactive) ----
+
+const langStore = {
+  subscribe(cb: () => void) {
+    if (typeof window === "undefined") return () => {};
+    const handler = () => cb();
+    window.addEventListener(LANG_EVENT, handler);
+    window.addEventListener("storage", handler);
+    return () => {
+      window.removeEventListener(LANG_EVENT, handler);
+      window.removeEventListener("storage", handler);
+    };
+  },
+  get: () => getLang(),
+  ssr: (): Lang => "en",
+};
+
+/** Returns the current language; re-renders when it changes. */
+export function useLang(): Lang {
+  return useSyncExternalStore(langStore.subscribe, langStore.get, langStore.ssr);
+}
+
+/** Returns a translation function bound to the current language; re-renders on change. */
+export function useT(): (key: TKey | string) => string {
+  const lang = useLang();
+  return (key) => t(key, lang);
+}
+
+export const LANGS = LANG_META.map(({ code, native, english }) => ({
+  code,
+  native,
+  english,
+}));
