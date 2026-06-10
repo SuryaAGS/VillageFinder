@@ -613,7 +613,7 @@ function CustomerPage() {
         </h2>
         {geo.error && !geo.coords && (
           <div className="mt-2 flex flex-wrap items-center gap-2 rounded-2xl border border-warning/30 bg-warning/10 px-4 py-2 text-xs font-semibold text-warning-foreground">
-            <span>GPS access denied. Pick a village below to browse shops.</span>
+            <span>{t("gpsDeniedPickVillage")}</span>
             <button
               type="button"
               onClick={() => setLocHelpOpen(true)}
