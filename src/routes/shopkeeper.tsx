@@ -822,6 +822,8 @@ function VoiceModal({
   onClose: () => void;
   onAdd: (p: ParsedItem) => void;
 }) {
+  const t = useT();
+  useLang();
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [parsed, setParsed] = useState<ParsedItem | null>(null);
