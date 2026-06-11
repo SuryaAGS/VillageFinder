@@ -192,7 +192,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
                         type="button"
                         onClick={() => cart.setQty(shop.id, item.id, inCartLine.qty - 1)}
                         className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-muted"
-                        aria-label="Decrease"
+                        aria-label={t("decrease")}
                       >
                         <Minus className="h-3.5 w-3.5" />
                       </button>
