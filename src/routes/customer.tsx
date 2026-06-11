@@ -403,7 +403,7 @@ function CustomerPage() {
         .trim();
       setQuery(text);
     };
-    rec.onerror = (e: any) => setVoiceError(e?.error || "Recognition error");
+    rec.onerror = (e: any) => setVoiceError(e?.error || t("recognitionError"));
     rec.onend = () => setListening(false);
     rec.start();
     /* eslint-enable @typescript-eslint/no-explicit-any */
