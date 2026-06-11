@@ -468,7 +468,7 @@ function CustomerPage() {
             <button
               type="button"
               onClick={listening ? stopVoice : startVoice}
-              aria-label={listening ? "Stop listening" : t("voiceSearch")}
+              aria-label={listening ? t("stopListening") : t("voiceSearch")}
               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl shadow-soft transition-all active:scale-95 ${
                 listening
                   ? "animate-pulse bg-destructive text-primary-foreground"
