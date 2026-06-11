@@ -710,7 +710,7 @@ function ShopSetup({ onCreated }: { onCreated: (s: DbShop) => void }) {
         </div>
         <h2 className="mt-6 font-display text-3xl font-black text-balance">{t("setupShop")}</h2>
         <p className="mt-1 text-muted-foreground">
-          Tell villagers about your shop. You can change this anytime.
+          {t("tellVillagers")}
         </p>
 
         <form onSubmit={submit} className="mt-6 space-y-3">
@@ -719,14 +719,14 @@ function ShopSetup({ onCreated }: { onCreated: (s: DbShop) => void }) {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Lakshmi Kirana"
+              placeholder={t("shopNamePlaceholder")}
               className="w-full bg-transparent px-4 py-3 text-lg outline-none"
             />
           </Field>
 
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Category
+              {t("category")}
             </label>
             <div className="mt-2 flex flex-wrap gap-2">
               {CATEGORIES.map((c) => (
