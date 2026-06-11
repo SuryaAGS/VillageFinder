@@ -565,14 +565,14 @@ function CustomerPage() {
                 onClick={geo.request}
                 disabled={geo.loading}
                 className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-muted-foreground shadow-soft active:scale-95 disabled:opacity-60"
-                title="Refresh location"
+                title={t("refreshLocation")}
               >
                 {geo.loading ? (
                   <Loader2 className="h-3 w-3 animate-spin" />
                 ) : (
                   <MapPin className="h-3 w-3" />
                 )}
-                {t("updateLocation") || "Update"}
+                {t("updateLocation")}
               </button>
             </>
           )}
