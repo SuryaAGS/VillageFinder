@@ -38,7 +38,8 @@ function maskNumber(num: string) {
 }
 
 export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: Props) {
-  const lang = getLang();
+  const t = useT();
+  const lang = useLang();
   const [whatsapp, setWhatsapp] = useState<string | null>(null);
   const [revealing, setRevealing] = useState(false);
   const [revealError, setRevealError] = useState<string | null>(null);
