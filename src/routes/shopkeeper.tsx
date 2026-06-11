@@ -124,7 +124,7 @@ function ShopkeeperPage() {
         .update({ is_open: next })
         .eq("id", shop.id);
       if (error) throw error;
-      toast.success(next ? "Shop is now Open" : "Shop marked Temporarily Closed");
+      toast.success(next ? t("shopNowOpen") : t("shopNowClosed"));
     } catch (e) {
       setShop({ ...shop, is_open: prev });
       showFriendlyError(e, "Couldn't update shop status.");
