@@ -244,7 +244,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
           onClick={() => setExpanded((v) => !v)}
           className="mt-2 w-full rounded-full bg-muted/60 px-4 py-2 text-xs font-bold text-primary hover:bg-muted"
         >
-          {expanded ? "Show Less" : `Show More (${matchedItems.length - 5})`}
+          {expanded ? t("showLess") : `${t("showMore")} (${matchedItems.length - 5})`}
         </button>
       )}
 
