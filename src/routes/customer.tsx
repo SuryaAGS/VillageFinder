@@ -112,6 +112,8 @@ type SortMode = "nearest" | "recent";
 type ShopRow = { shop: Shop & { landmark: string | null; isOpen: boolean }; items: InventoryItem[]; coords: Coords | null };
 
 function CustomerPage() {
+  const t = useT();
+  useLang(); // ensure re-render when language changes
   const navigate = useNavigate();
   const { user, role, loading: authLoading } = useAuth();
   const [shops, setShops] = useState<ShopRow[]>([]);
