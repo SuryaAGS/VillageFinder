@@ -83,7 +83,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
       setWhatsapp(data as string);
       return data as string;
     } catch (e) {
-      setRevealError(friendlyError(e, "Couldn't reveal the contact. Please try again."));
+      setRevealError(friendlyError(e, t("couldNotRevealContact")));
       return null;
     } finally {
       setRevealing(false);
