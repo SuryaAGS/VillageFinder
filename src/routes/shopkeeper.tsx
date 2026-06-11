@@ -1069,27 +1069,27 @@ function ScanModal({
 
         <div className="mt-4 space-y-2">
           <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Barcode
+            {t("barcode")}
           </label>
           <input
             value={code}
             onChange={(e) => setManual(e.target.value)}
-            placeholder="Detected or type manually"
+            placeholder={t("detectedOrType")}
             className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-mono outline-none focus:border-primary"
           />
 
           <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Item name
+            {t("itemName")}
           </label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Parle-G Biscuit"
+            placeholder={t("itemNamePlaceholder")}
             className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 outline-none focus:border-primary"
           />
 
           <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Price (₹)
+            {t("priceRupees")}
           </label>
           <input
             value={price}
@@ -1105,14 +1105,14 @@ function ScanModal({
             onClick={onClose}
             className="flex-1 rounded-2xl border border-border bg-card py-3 font-bold"
           >
-            Cancel
+            {t("cancel")}
           </button>
           <button
             onClick={submit}
             disabled={!name.trim()}
             className="flex-1 rounded-2xl bg-gradient-warm py-3 font-bold text-primary-foreground shadow-warm disabled:opacity-40"
           >
-            Save item
+            {t("saveItem")}
           </button>
         </div>
       </motion.div>
