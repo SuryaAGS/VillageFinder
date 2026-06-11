@@ -494,15 +494,15 @@ function ShopkeeperPage() {
               <h2 className="font-display text-lg font-bold">{t("shopStatus")}</h2>
               <p className="text-sm text-muted-foreground">
                 {shop.is_open === false
-                  ? "Customers see your shop as Temporarily Closed."
-                  : "Your shop is visible and accepting orders."}
+                  ? t("shopClosedDesc")
+                  : t("shopOpenDesc")}
               </p>
             </div>
             <Switch
               checked={shop.is_open !== false}
               onCheckedChange={toggleShopStatus}
               disabled={statusSaving}
-              aria-label="Toggle shop open/closed"
+              aria-label={t("toggleShopAria")}
             />
           </div>
         </section>
