@@ -966,6 +966,8 @@ function ScanModal({
   onClose: () => void;
   onAdd: (p: ParsedItem) => void;
 }) {
+  const t = useT();
+  useLang();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [detected, setDetected] = useState<string | null>(null);
