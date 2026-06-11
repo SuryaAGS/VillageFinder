@@ -10,7 +10,7 @@ import { ShopCardSkeleton } from "@/components/ShopCardSkeleton";
 import { LocationSheet } from "@/components/LocationSheet";
 import { LocationHelpDialog } from "@/components/LocationHelpDialog";
 import { HelpCircle } from "lucide-react";
-import { t } from "@/lib/i18n";
+import { useT, useLang, getLang } from "@/lib/i18n";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { showFriendlyError } from "@/lib/friendlyError";
@@ -19,7 +19,6 @@ import type { Shop, InventoryItem } from "@/lib/mockData";
 import { useGeolocation, distanceKm, type Coords } from "@/hooks/useGeolocation";
 import { useReverseGeocode } from "@/hooks/useReverseGeocode";
 import { speechLangCode, localizeItem } from "@/lib/inventoryI18n";
-import { getLang } from "@/lib/i18n";
 
 import { pageHead, SITE_URL } from "@/lib/seo";
 
