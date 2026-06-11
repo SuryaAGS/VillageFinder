@@ -534,18 +534,17 @@ function ShopkeeperPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-destructive">
               <AlertTriangle className="h-5 w-5" />
-              Permanently delete your shop?
+              {t("permDeleteShopTitle")}
             </DialogTitle>
             <DialogDescription>
-              This action cannot be undone. All your shop data, inventory, and listings will be
-              deleted forever. Type <span className="font-mono font-bold">DELETE</span> to confirm.
+              {t("permDeleteShopBody")}
             </DialogDescription>
           </DialogHeader>
           <input
             autoFocus
             value={deleteConfirm}
             onChange={(e) => setDeleteConfirm(e.target.value)}
-            placeholder="Type DELETE"
+            placeholder={t("typeDeletePlaceholder")}
             className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-mono outline-none focus:border-destructive"
           />
           <DialogFooter>
