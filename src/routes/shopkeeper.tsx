@@ -632,6 +632,8 @@ function ShopkeeperPage() {
 }
 
 function ShopSetup({ onCreated }: { onCreated: (s: DbShop) => void }) {
+  const t = useT();
+  useLang();
   const { user } = useAuth();
   const [name, setName] = useState("");
   const [category, setCategory] = useState<string>(CATEGORIES[0]);
