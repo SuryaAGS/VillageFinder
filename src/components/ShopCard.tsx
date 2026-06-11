@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import type { Shop, InventoryItem } from "@/lib/mockData";
 import { timeAgo } from "@/lib/mockData";
-import { t, getLang } from "@/lib/i18n";
+import { useT, useLang } from "@/lib/i18n";
 import { localizeItem } from "@/lib/inventoryI18n";
 import { supabase } from "@/integrations/supabase/client";
 import { friendlyError } from "@/lib/friendlyError";
