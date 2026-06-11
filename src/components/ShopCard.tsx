@@ -276,7 +276,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
         <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-muted/40 px-4 py-2.5 text-sm">
           <div className="min-w-0">
             <p className="truncate font-semibold text-foreground">
-              {[shop.landmark, shop.village].filter(Boolean).join(", ") || "Address"}
+              {[shop.landmark, shop.village].filter(Boolean).join(", ") || t("addressLabel")}
             </p>
             {distance !== null && (
               <p className="text-xs text-muted-foreground">
