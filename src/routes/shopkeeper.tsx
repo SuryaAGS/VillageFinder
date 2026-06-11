@@ -910,10 +910,10 @@ function VoiceModal({
             )}
           </motion.button>
           <p className="mt-4 font-display text-xl font-bold">
-            {listening ? t("listening") : "Tap to speak"}
+            {listening ? t("listening") : t("tapToSpeak")}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Try: "Add 10 kg rice for 60 rupees"
+            {t("tryAddRice")}
           </p>
         </div>
 
@@ -929,7 +929,7 @@ function VoiceModal({
             <p className="text-xs uppercase tracking-wider text-primary">{t("parsed")}</p>
             <p className="mt-1 font-display text-lg font-bold">{parsed.name}</p>
             <p className="text-sm text-muted-foreground">
-              {parsed.price ? `₹${parsed.price}` : "no price"}
+              {parsed.price ? `₹${parsed.price}` : t("noPrice")}
               {parsed.unit ? ` / ${parsed.unit}` : ""} ·{" "}
               {parsed.status === "out" ? t("outOfStock") : t("inStock")}
             </p>
@@ -943,14 +943,14 @@ function VoiceModal({
             onClick={onClose}
             className="flex-1 rounded-2xl border border-border bg-card py-3 font-bold"
           >
-            Cancel
+            {t("cancel")}
           </button>
           <button
             onClick={confirm}
             disabled={!parsed}
             className="flex-1 rounded-2xl bg-gradient-warm py-3 font-bold text-primary-foreground shadow-warm disabled:opacity-40"
           >
-            Add to inventory
+            {t("addToInventory")}
           </button>
         </div>
       </motion.div>
