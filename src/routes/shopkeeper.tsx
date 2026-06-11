@@ -424,7 +424,7 @@ function ShopkeeperPage() {
                       </>
                     ) : (
                       <>
-                        <Plus className="h-4 w-4" /> Add
+                        <Plus className="h-4 w-4" /> {t("addLabel")}
                       </>
                     )}
                   </button>
