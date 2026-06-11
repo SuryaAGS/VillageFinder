@@ -1010,13 +1010,11 @@ function ScanModal({
           };
           raf = requestAnimationFrame(tick);
         } else {
-          setError(
-            "Live barcode scanning isn't supported on this browser. Type the barcode manually below.",
-          );
+          setError(t("liveScanNotSupported"));
         }
       } catch (e: any) {
         setLoading(false);
-        setError(e?.message || "Camera permission denied");
+        setError(e?.message || t("cameraDenied"));
       }
     })();
     /* eslint-enable @typescript-eslint/no-explicit-any */
