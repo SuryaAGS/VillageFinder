@@ -620,7 +620,7 @@ function CustomerPage() {
               onClick={() => setLocHelpOpen(true)}
               className="inline-flex items-center gap-1 rounded-full bg-card px-2 py-0.5 text-foreground shadow-soft hover:bg-muted"
             >
-              <HelpCircle className="h-3 w-3" /> How to enable location?
+              <HelpCircle className="h-3 w-3" /> {t("howToEnableLocation")}
             </button>
           </div>
         )}
