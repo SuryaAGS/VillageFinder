@@ -650,13 +650,13 @@ function CustomerPage() {
               {query.trim()
                 ? t("noResults")
                 : geo.coords && !villagePicked
-                  ? "No shops found nearby"
-                  : "No shops yet"}
+                  ? t("noShopsNearby")
+                  : t("noShopsYet")}
             </p>
             {!query.trim() && geo.coords && !villagePicked && (
               <>
                 <p className="text-sm text-muted-foreground">
-                  No shops within 10 km of your location. Try selecting a village manually.
+                  {t("noShopsWithin10km")}
                 </p>
                 {villages.length > 0 && (
                   <select
@@ -665,7 +665,7 @@ function CustomerPage() {
                     className="mt-1 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold shadow-soft outline-none"
                     aria-label={t("chooseArea")}
                   >
-                    <option value="__all">Select a village…</option>
+                    <option value="__all">{t("selectVillage")}</option>
                     {villages.map((v) => (
                       <option key={v} value={v}>
                         {v}
@@ -677,7 +677,7 @@ function CustomerPage() {
             )}
             {!query.trim() && !geo.coords && (
               <p className="text-sm text-muted-foreground">
-                Enable location or pick a village from the dropdown above.
+                {t("enableLocOrPickVillage")}
               </p>
             )}
           </motion.div>
