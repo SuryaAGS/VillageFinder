@@ -137,7 +137,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
           </p>
           {isClosed && (
             <p className="mt-1 inline-flex items-center gap-1 rounded-full bg-destructive/15 px-2 py-0.5 text-xs font-bold text-destructive">
-              <XCircle className="h-3 w-3" /> Temporarily Closed
+              <XCircle className="h-3 w-3" /> {t("tempClosed")}
             </p>
           )}
           {shop.landmark && (
