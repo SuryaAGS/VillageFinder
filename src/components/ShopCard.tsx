@@ -312,7 +312,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
       >
         <MessageCircle className="h-5 w-5" />
         {isClosed
-          ? "Shop Closed"
+          ? t("shopClosed")
           : cartCount > 0
             ? `${t("sendOrderWa")} (${cartCount})`
             : t("orderWhatsApp")}
