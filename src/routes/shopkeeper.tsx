@@ -77,6 +77,8 @@ type DbShop = {
 };
 
 function ShopkeeperPage() {
+  const t = useT();
+  useLang();
   const navigate = useNavigate();
   const { user, role, loading: authLoading } = useAuth();
   const [shop, setShop] = useState<DbShop | null>(null);
