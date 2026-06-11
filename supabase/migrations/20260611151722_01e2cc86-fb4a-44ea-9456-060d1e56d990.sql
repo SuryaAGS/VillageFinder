@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Anyone can view shop contacts" ON public.shop_contacts;
