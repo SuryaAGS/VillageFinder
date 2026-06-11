@@ -77,7 +77,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
       });
       if (error) throw error;
       if (!data) {
-        setRevealError("Sign in to contact this shop");
+        setRevealError(t("signInToContact"));
         return null;
       }
       setWhatsapp(data as string);
