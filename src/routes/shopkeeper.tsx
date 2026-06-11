@@ -855,7 +855,7 @@ function VoiceModal({
       const p = parseVoiceCommand(text);
       if (p) setParsed(p);
     };
-    rec.onerror = (e: any) => setError(e.error || "Recognition error");
+    rec.onerror = (e: any) => setError(e.error || t("recognitionError"));
     rec.onend = () => setListening(false);
     rec.start();
     /* eslint-enable @typescript-eslint/no-explicit-any */
