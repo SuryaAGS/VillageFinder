@@ -751,7 +751,7 @@ function ShopSetup({ onCreated }: { onCreated: (s: DbShop) => void }) {
               required
               value={village}
               onChange={(e) => setVillage(e.target.value)}
-              placeholder="Pothavaram"
+              placeholder={t("villagePlaceholder")}
               className="w-full bg-transparent px-4 py-3 text-lg outline-none"
             />
           </Field>
