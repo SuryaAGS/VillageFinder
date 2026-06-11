@@ -839,7 +839,7 @@ function VoiceModal({
     };
     const SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      setError("Voice recognition not supported on this browser. Try Chrome on Android.");
+      setError(t("voiceNotSupported"));
       return;
     }
     /* eslint-disable @typescript-eslint/no-explicit-any */
