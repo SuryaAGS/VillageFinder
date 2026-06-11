@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AppHeader } from "@/components/AppHeader";
 import { POPULAR_BY_CATEGORY, CATEGORIES, timeAgo } from "@/lib/mockData";
-import { t } from "@/lib/i18n";
+import { useT, useLang } from "@/lib/i18n";
 import { parseVoiceCommand, type ParsedItem } from "@/lib/voiceParser";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
