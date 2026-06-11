@@ -497,7 +497,7 @@ function CustomerPage() {
           >
             <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
               <Sparkles className="h-3.5 w-3.5" />
-              {aiLoading ? "Thinking…" : "Try these"}
+              {aiLoading ? t("thinking") : t("tryThese")}
             </div>
             {aiSuggestions.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
