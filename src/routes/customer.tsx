@@ -10,7 +10,7 @@ import { ShopCardSkeleton } from "@/components/ShopCardSkeleton";
 import { LocationSheet } from "@/components/LocationSheet";
 import { LocationHelpDialog } from "@/components/LocationHelpDialog";
 import { HelpCircle } from "lucide-react";
-import { t } from "@/lib/i18n";
+import { useT, useLang, getLang } from "@/lib/i18n";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { showFriendlyError } from "@/lib/friendlyError";
@@ -19,7 +19,6 @@ import type { Shop, InventoryItem } from "@/lib/mockData";
 import { useGeolocation, distanceKm, type Coords } from "@/hooks/useGeolocation";
 import { useReverseGeocode } from "@/hooks/useReverseGeocode";
 import { speechLangCode, localizeItem } from "@/lib/inventoryI18n";
-import { getLang } from "@/lib/i18n";
 
 import { pageHead, SITE_URL } from "@/lib/seo";
 
@@ -113,6 +112,8 @@ type SortMode = "nearest" | "recent";
 type ShopRow = { shop: Shop & { landmark: string | null; isOpen: boolean }; items: InventoryItem[]; coords: Coords | null };
 
 function CustomerPage() {
+  const t = useT();
+  useLang(); // ensure re-render when language changes
   const navigate = useNavigate();
   const { user, role, loading: authLoading } = useAuth();
   const [shops, setShops] = useState<ShopRow[]>([]);
@@ -387,7 +388,7 @@ function CustomerPage() {
     };
     const SR = w.SpeechRecognition || w.webkitSpeechRecognition;
     if (!SR) {
-      setVoiceError("Voice not supported on this browser. Try Chrome on Android.");
+      setVoiceError(t("voiceNotSupported"));
       return;
     }
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -402,7 +403,7 @@ function CustomerPage() {
         .trim();
       setQuery(text);
     };
-    rec.onerror = (e: any) => setVoiceError(e?.error || "Recognition error");
+    rec.onerror = (e: any) => setVoiceError(e?.error || t("recognitionError"));
     rec.onend = () => setListening(false);
     rec.start();
     /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -467,7 +468,7 @@ function CustomerPage() {
             <button
               type="button"
               onClick={listening ? stopVoice : startVoice}
-              aria-label={listening ? "Stop listening" : t("voiceSearch")}
+              aria-label={listening ? t("stopListening") : t("voiceSearch")}
               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl shadow-soft transition-all active:scale-95 ${
                 listening
                   ? "animate-pulse bg-destructive text-primary-foreground"
@@ -496,7 +497,7 @@ function CustomerPage() {
           >
             <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
               <Sparkles className="h-3.5 w-3.5" />
-              {aiLoading ? "Thinking…" : "Try these"}
+              {aiLoading ? t("thinking") : t("tryThese")}
             </div>
             {aiSuggestions.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
@@ -564,14 +565,14 @@ function CustomerPage() {
                 onClick={geo.request}
                 disabled={geo.loading}
                 className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-muted-foreground shadow-soft active:scale-95 disabled:opacity-60"
-                title="Refresh location"
+                title={t("refreshLocation")}
               >
                 {geo.loading ? (
                   <Loader2 className="h-3 w-3 animate-spin" />
                 ) : (
                   <MapPin className="h-3 w-3" />
                 )}
-                {t("updateLocation") || "Update"}
+                {t("updateLocation")}
               </button>
             </>
           )}
@@ -583,7 +584,7 @@ function CustomerPage() {
                 onClick={() => setLocHelpOpen(true)}
                 className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 font-semibold text-foreground hover:bg-muted"
               >
-                <HelpCircle className="h-3 w-3" /> How to enable location?
+                <HelpCircle className="h-3 w-3" /> {t("howToEnableLocation")}
               </button>
             </span>
           )}
@@ -609,7 +610,7 @@ function CustomerPage() {
         </div>
 
         <h2 className="mt-6 font-display text-xl font-bold">
-          {query.trim() ? `Results for "${query.trim()}"` : t("nearbyShops")}
+          {query.trim() ? `${t("resultsFor")} "${query.trim()}"` : t("nearbyShops")}
         </h2>
         {geo.error && !geo.coords && (
           <div className="mt-2 flex flex-wrap items-center gap-2 rounded-2xl border border-warning/30 bg-warning/10 px-4 py-2 text-xs font-semibold text-warning-foreground">
@@ -619,7 +620,7 @@ function CustomerPage() {
               onClick={() => setLocHelpOpen(true)}
               className="inline-flex items-center gap-1 rounded-full bg-card px-2 py-0.5 text-foreground shadow-soft hover:bg-muted"
             >
-              <HelpCircle className="h-3 w-3" /> How to enable location?
+              <HelpCircle className="h-3 w-3" /> {t("howToEnableLocation")}
             </button>
           </div>
         )}
@@ -649,13 +650,13 @@ function CustomerPage() {
               {query.trim()
                 ? t("noResults")
                 : geo.coords && !villagePicked
-                  ? "No shops found nearby"
-                  : "No shops yet"}
+                  ? t("noShopsNearby")
+                  : t("noShopsYet")}
             </p>
             {!query.trim() && geo.coords && !villagePicked && (
               <>
                 <p className="text-sm text-muted-foreground">
-                  No shops within 10 km of your location. Try selecting a village manually.
+                  {t("noShopsWithin10km")}
                 </p>
                 {villages.length > 0 && (
                   <select
@@ -664,7 +665,7 @@ function CustomerPage() {
                     className="mt-1 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold shadow-soft outline-none"
                     aria-label={t("chooseArea")}
                   >
-                    <option value="__all">Select a village…</option>
+                    <option value="__all">{t("selectVillage")}</option>
                     {villages.map((v) => (
                       <option key={v} value={v}>
                         {v}
@@ -676,7 +677,7 @@ function CustomerPage() {
             )}
             {!query.trim() && !geo.coords && (
               <p className="text-sm text-muted-foreground">
-                Enable location or pick a village from the dropdown above.
+                {t("enableLocOrPickVillage")}
               </p>
             )}
           </motion.div>

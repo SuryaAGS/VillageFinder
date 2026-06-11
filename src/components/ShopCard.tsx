@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import type { Shop, InventoryItem } from "@/lib/mockData";
 import { timeAgo } from "@/lib/mockData";
-import { t, getLang } from "@/lib/i18n";
+import { useT, useLang } from "@/lib/i18n";
 import { localizeItem } from "@/lib/inventoryI18n";
 import { supabase } from "@/integrations/supabase/client";
 import { friendlyError } from "@/lib/friendlyError";
@@ -38,7 +38,8 @@ function maskNumber(num: string) {
 }
 
 export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: Props) {
-  const lang = getLang();
+  const t = useT();
+  const lang = useLang();
   const [whatsapp, setWhatsapp] = useState<string | null>(null);
   const [revealing, setRevealing] = useState(false);
   const [revealError, setRevealError] = useState<string | null>(null);
@@ -76,13 +77,13 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
       });
       if (error) throw error;
       if (!data) {
-        setRevealError("Sign in to contact this shop");
+        setRevealError(t("signInToContact"));
         return null;
       }
       setWhatsapp(data as string);
       return data as string;
     } catch (e) {
-      setRevealError(friendlyError(e, "Couldn't reveal the contact. Please try again."));
+      setRevealError(friendlyError(e, t("couldNotRevealContact")));
       return null;
     } finally {
       setRevealing(false);
@@ -136,7 +137,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
           </p>
           {isClosed && (
             <p className="mt-1 inline-flex items-center gap-1 rounded-full bg-destructive/15 px-2 py-0.5 text-xs font-bold text-destructive">
-              <XCircle className="h-3 w-3" /> Temporarily Closed
+              <XCircle className="h-3 w-3" /> {t("tempClosed")}
             </p>
           )}
           {shop.landmark && (
@@ -191,7 +192,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
                         type="button"
                         onClick={() => cart.setQty(shop.id, item.id, inCartLine.qty - 1)}
                         className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-muted"
-                        aria-label="Decrease"
+                        aria-label={t("decrease")}
                       >
                         <Minus className="h-3.5 w-3.5" />
                       </button>
@@ -202,7 +203,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
                         type="button"
                         onClick={() => cart.setQty(shop.id, item.id, inCartLine.qty + 1)}
                         className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-muted"
-                        aria-label="Increase"
+                        aria-label={t("increase")}
                       >
                         <Plus className="h-3.5 w-3.5" />
                       </button>
@@ -243,7 +244,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
           onClick={() => setExpanded((v) => !v)}
           className="mt-2 w-full rounded-full bg-muted/60 px-4 py-2 text-xs font-bold text-primary hover:bg-muted"
         >
-          {expanded ? "Show Less" : `Show More (${matchedItems.length - 5})`}
+          {expanded ? t("showLess") : `${t("showMore")} (${matchedItems.length - 5})`}
         </button>
       )}
 
@@ -275,7 +276,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
         <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-muted/40 px-4 py-2.5 text-sm">
           <div className="min-w-0">
             <p className="truncate font-semibold text-foreground">
-              {[shop.landmark, shop.village].filter(Boolean).join(", ") || "Address"}
+              {[shop.landmark, shop.village].filter(Boolean).join(", ") || t("addressLabel")}
             </p>
             {distance !== null && (
               <p className="text-xs text-muted-foreground">
@@ -311,7 +312,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
       >
         <MessageCircle className="h-5 w-5" />
         {isClosed
-          ? "Shop Closed"
+          ? t("shopClosed")
           : cartCount > 0
             ? `${t("sendOrderWa")} (${cartCount})`
             : t("orderWhatsApp")}

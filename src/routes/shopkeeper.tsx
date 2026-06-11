@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AppHeader } from "@/components/AppHeader";
 import { POPULAR_BY_CATEGORY, CATEGORIES, timeAgo } from "@/lib/mockData";
-import { t } from "@/lib/i18n";
+import { useT, useLang } from "@/lib/i18n";
 import { parseVoiceCommand, type ParsedItem } from "@/lib/voiceParser";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -77,6 +77,8 @@ type DbShop = {
 };
 
 function ShopkeeperPage() {
+  const t = useT();
+  useLang();
   const navigate = useNavigate();
   const { user, role, loading: authLoading } = useAuth();
   const [shop, setShop] = useState<DbShop | null>(null);
@@ -122,7 +124,7 @@ function ShopkeeperPage() {
         .update({ is_open: next })
         .eq("id", shop.id);
       if (error) throw error;
-      toast.success(next ? "Shop is now Open" : "Shop marked Temporarily Closed");
+      toast.success(next ? t("shopNowOpen") : t("shopNowClosed"));
     } catch (e) {
       setShop({ ...shop, is_open: prev });
       showFriendlyError(e, "Couldn't update shop status.");
@@ -422,7 +424,7 @@ function ShopkeeperPage() {
                       </>
                     ) : (
                       <>
-                        <Plus className="h-4 w-4" /> Add
+                        <Plus className="h-4 w-4" /> {t("addLabel")}
                       </>
                     )}
                   </button>
@@ -492,15 +494,15 @@ function ShopkeeperPage() {
               <h2 className="font-display text-lg font-bold">{t("shopStatus")}</h2>
               <p className="text-sm text-muted-foreground">
                 {shop.is_open === false
-                  ? "Customers see your shop as Temporarily Closed."
-                  : "Your shop is visible and accepting orders."}
+                  ? t("shopClosedDesc")
+                  : t("shopOpenDesc")}
               </p>
             </div>
             <Switch
               checked={shop.is_open !== false}
               onCheckedChange={toggleShopStatus}
               disabled={statusSaving}
-              aria-label="Toggle shop open/closed"
+              aria-label={t("toggleShopAria")}
             />
           </div>
         </section>
@@ -532,18 +534,17 @@ function ShopkeeperPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-destructive">
               <AlertTriangle className="h-5 w-5" />
-              Permanently delete your shop?
+              {t("permDeleteShopTitle")}
             </DialogTitle>
             <DialogDescription>
-              This action cannot be undone. All your shop data, inventory, and listings will be
-              deleted forever. Type <span className="font-mono font-bold">DELETE</span> to confirm.
+              {t("permDeleteShopBody")}
             </DialogDescription>
           </DialogHeader>
           <input
             autoFocus
             value={deleteConfirm}
             onChange={(e) => setDeleteConfirm(e.target.value)}
-            placeholder="Type DELETE"
+            placeholder={t("typeDeletePlaceholder")}
             className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-mono outline-none focus:border-destructive"
           />
           <DialogFooter>
@@ -630,6 +631,8 @@ function ShopkeeperPage() {
 }
 
 function ShopSetup({ onCreated }: { onCreated: (s: DbShop) => void }) {
+  const t = useT();
+  useLang();
   const { user } = useAuth();
   const [name, setName] = useState("");
   const [category, setCategory] = useState<string>(CATEGORIES[0]);
@@ -707,7 +710,7 @@ function ShopSetup({ onCreated }: { onCreated: (s: DbShop) => void }) {
         </div>
         <h2 className="mt-6 font-display text-3xl font-black text-balance">{t("setupShop")}</h2>
         <p className="mt-1 text-muted-foreground">
-          Tell villagers about your shop. You can change this anytime.
+          {t("tellVillagers")}
         </p>
 
         <form onSubmit={submit} className="mt-6 space-y-3">
@@ -716,14 +719,14 @@ function ShopSetup({ onCreated }: { onCreated: (s: DbShop) => void }) {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Lakshmi Kirana"
+              placeholder={t("shopNamePlaceholder")}
               className="w-full bg-transparent px-4 py-3 text-lg outline-none"
             />
           </Field>
 
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Category
+              {t("category")}
             </label>
             <div className="mt-2 flex flex-wrap gap-2">
               {CATEGORIES.map((c) => (
@@ -748,7 +751,7 @@ function ShopSetup({ onCreated }: { onCreated: (s: DbShop) => void }) {
               required
               value={village}
               onChange={(e) => setVillage(e.target.value)}
-              placeholder="Pothavaram"
+              placeholder={t("villagePlaceholder")}
               className="w-full bg-transparent px-4 py-3 text-lg outline-none"
             />
           </Field>
@@ -818,6 +821,8 @@ function VoiceModal({
   onClose: () => void;
   onAdd: (p: ParsedItem) => void;
 }) {
+  const t = useT();
+  useLang();
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [parsed, setParsed] = useState<ParsedItem | null>(null);
@@ -834,7 +839,7 @@ function VoiceModal({
     };
     const SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      setError("Voice recognition not supported on this browser. Try Chrome on Android.");
+      setError(t("voiceNotSupported"));
       return;
     }
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -850,7 +855,7 @@ function VoiceModal({
       const p = parseVoiceCommand(text);
       if (p) setParsed(p);
     };
-    rec.onerror = (e: any) => setError(e.error || "Recognition error");
+    rec.onerror = (e: any) => setError(e.error || t("recognitionError"));
     rec.onend = () => setListening(false);
     rec.start();
     /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -905,10 +910,10 @@ function VoiceModal({
             )}
           </motion.button>
           <p className="mt-4 font-display text-xl font-bold">
-            {listening ? t("listening") : "Tap to speak"}
+            {listening ? t("listening") : t("tapToSpeak")}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Try: "Add 10 kg rice for 60 rupees"
+            {t("tryAddRice")}
           </p>
         </div>
 
@@ -924,7 +929,7 @@ function VoiceModal({
             <p className="text-xs uppercase tracking-wider text-primary">{t("parsed")}</p>
             <p className="mt-1 font-display text-lg font-bold">{parsed.name}</p>
             <p className="text-sm text-muted-foreground">
-              {parsed.price ? `₹${parsed.price}` : "no price"}
+              {parsed.price ? `₹${parsed.price}` : t("noPrice")}
               {parsed.unit ? ` / ${parsed.unit}` : ""} ·{" "}
               {parsed.status === "out" ? t("outOfStock") : t("inStock")}
             </p>
@@ -938,14 +943,14 @@ function VoiceModal({
             onClick={onClose}
             className="flex-1 rounded-2xl border border-border bg-card py-3 font-bold"
           >
-            Cancel
+            {t("cancel")}
           </button>
           <button
             onClick={confirm}
             disabled={!parsed}
             className="flex-1 rounded-2xl bg-gradient-warm py-3 font-bold text-primary-foreground shadow-warm disabled:opacity-40"
           >
-            Add to inventory
+            {t("addToInventory")}
           </button>
         </div>
       </motion.div>
@@ -960,6 +965,8 @@ function ScanModal({
   onClose: () => void;
   onAdd: (p: ParsedItem) => void;
 }) {
+  const t = useT();
+  useLang();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [detected, setDetected] = useState<string | null>(null);
@@ -1003,13 +1010,11 @@ function ScanModal({
           };
           raf = requestAnimationFrame(tick);
         } else {
-          setError(
-            "Live barcode scanning isn't supported on this browser. Type the barcode manually below.",
-          );
+          setError(t("liveScanNotSupported"));
         }
       } catch (e: any) {
         setLoading(false);
-        setError(e?.message || "Camera permission denied");
+        setError(e?.message || t("cameraDenied"));
       }
     })();
     /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -1064,27 +1069,27 @@ function ScanModal({
 
         <div className="mt-4 space-y-2">
           <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Barcode
+            {t("barcode")}
           </label>
           <input
             value={code}
             onChange={(e) => setManual(e.target.value)}
-            placeholder="Detected or type manually"
+            placeholder={t("detectedOrType")}
             className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-mono outline-none focus:border-primary"
           />
 
           <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Item name
+            {t("itemName")}
           </label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Parle-G Biscuit"
+            placeholder={t("itemNamePlaceholder")}
             className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 outline-none focus:border-primary"
           />
 
           <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Price (₹)
+            {t("priceRupees")}
           </label>
           <input
             value={price}
@@ -1100,14 +1105,14 @@ function ScanModal({
             onClick={onClose}
             className="flex-1 rounded-2xl border border-border bg-card py-3 font-bold"
           >
-            Cancel
+            {t("cancel")}
           </button>
           <button
             onClick={submit}
             disabled={!name.trim()}
             className="flex-1 rounded-2xl bg-gradient-warm py-3 font-bold text-primary-foreground shadow-warm disabled:opacity-40"
           >
-            Save item
+            {t("saveItem")}
           </button>
         </div>
       </motion.div>
