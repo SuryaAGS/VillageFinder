@@ -388,7 +388,7 @@ function CustomerPage() {
     };
     const SR = w.SpeechRecognition || w.webkitSpeechRecognition;
     if (!SR) {
-      setVoiceError("Voice not supported on this browser. Try Chrome on Android.");
+      setVoiceError(t("voiceNotSupported"));
       return;
     }
     /* eslint-disable @typescript-eslint/no-explicit-any */
