@@ -14,7 +14,7 @@ import { t } from "@/lib/i18n";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { showFriendlyError } from "@/lib/friendlyError";
-import { aiSuggestItems } from "@/server/aiSuggest";
+import { aiSuggestItems } from "@/lib/aiSuggest.functions";
 import type { Shop, InventoryItem } from "@/lib/mockData";
 import { useGeolocation, distanceKm, type Coords } from "@/hooks/useGeolocation";
 import { useReverseGeocode } from "@/hooks/useReverseGeocode";
