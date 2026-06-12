@@ -132,7 +132,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
         <div className="min-w-0">
           <h3 className="font-display text-xl font-bold leading-tight">{shop.name}</h3>
           <p className="text-sm text-muted-foreground">
-            {shop.category}
+            {localizeCategory(shop.category, lang)}
             {shop.village ? ` · ${shop.village}` : ""}
           </p>
           {isClosed && (
