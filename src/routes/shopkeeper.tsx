@@ -457,9 +457,9 @@ function ShopkeeperPage() {
                     className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-3"
                   >
                     <div className="min-w-0">
-                      <p className="truncate font-bold">{i.name}</p>
+                      <p className="truncate font-bold">{localizeItem(i.name, lang)}</p>
                       <p className="text-xs text-muted-foreground">
-                        ₹{i.price} / {i.unit} · {timeAgo(new Date(i.updated_at).getTime())}
+                        ₹{i.price} / {localizeUnit(i.unit, lang)} · {timeAgo(new Date(i.updated_at).getTime(), lang)}
                       </p>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
