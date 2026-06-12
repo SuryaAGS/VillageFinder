@@ -163,7 +163,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
             )}
             <span className="inline-flex items-center gap-1">
               <Clock className="h-3.5 w-3.5" />
-              {t("lastUpdated")} {timeAgo(shop.updatedAt)}
+              {t("lastUpdated")} {timeAgo(shop.updatedAt, lang)}
             </span>
           </div>
         </div>
