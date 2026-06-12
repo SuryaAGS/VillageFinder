@@ -15,7 +15,7 @@ import {
   Navigation,
 } from "lucide-react";
 import type { Shop, InventoryItem } from "@/lib/mockData";
-import { timeAgo } from "@/lib/mockData";
+import { timeAgo, localizeCategory, localizeUnit } from "@/lib/mockData";
 import { useT, useLang } from "@/lib/i18n";
 import { localizeItem } from "@/lib/inventoryI18n";
 import { supabase } from "@/integrations/supabase/client";
@@ -132,7 +132,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
         <div className="min-w-0">
           <h3 className="font-display text-xl font-bold leading-tight">{shop.name}</h3>
           <p className="text-sm text-muted-foreground">
-            {shop.category}
+            {localizeCategory(shop.category, lang)}
             {shop.village ? ` · ${shop.village}` : ""}
           </p>
           {isClosed && (
@@ -163,7 +163,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
             )}
             <span className="inline-flex items-center gap-1">
               <Clock className="h-3.5 w-3.5" />
-              {t("lastUpdated")} {timeAgo(shop.updatedAt)}
+              {t("lastUpdated")} {timeAgo(shop.updatedAt, lang)}
             </span>
           </div>
         </div>
@@ -182,7 +182,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
                 <div className="min-w-0">
                   <p className="truncate font-semibold">{localName}</p>
                   <p className="text-xs text-muted-foreground">
-                    ₹{item.price} / {item.unit} · {timeAgo(item.updatedAt)}
+                    ₹{item.price} / {localizeUnit(item.unit, lang)} · {timeAgo(item.updatedAt, lang)}
                   </p>
                 </div>
                 {item.status === "in" ? (

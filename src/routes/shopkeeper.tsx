@@ -35,7 +35,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { AppHeader } from "@/components/AppHeader";
-import { POPULAR_BY_CATEGORY, CATEGORIES, timeAgo } from "@/lib/mockData";
+import { POPULAR_BY_CATEGORY, CATEGORIES, timeAgo, localizeUnit } from "@/lib/mockData";
+import { localizeItem } from "@/lib/inventoryI18n";
 import { useT, useLang } from "@/lib/i18n";
 import { parseVoiceCommand, type ParsedItem } from "@/lib/voiceParser";
 import { useAuth } from "@/hooks/useAuth";
@@ -78,7 +79,7 @@ type DbShop = {
 
 function ShopkeeperPage() {
   const t = useT();
-  useLang();
+  const lang = useLang();
   const navigate = useNavigate();
   const { user, role, loading: authLoading } = useAuth();
   const [shop, setShop] = useState<DbShop | null>(null);
@@ -384,7 +385,7 @@ function ShopkeeperPage() {
                   className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-3 shadow-soft"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-bold">{p.name}</p>
+                    <p className="truncate font-bold">{localizeItem(p.name, lang)}</p>
                     <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
                       <span>₹</span>
                       <input
@@ -398,9 +399,9 @@ function ShopkeeperPage() {
                         }}
                         className="w-16 rounded-md border border-border bg-background px-2 py-0.5 font-semibold text-foreground outline-none focus:border-primary"
                       />
-                      <span>/ {p.unit}</span>
+                      <span>/ {localizeUnit(p.unit, lang)}</span>
                       {existing && (
-                        <span>· {timeAgo(new Date(existing.updated_at).getTime())}</span>
+                        <span>· {timeAgo(new Date(existing.updated_at).getTime(), lang)}</span>
                       )}
                     </div>
                   </div>
@@ -456,9 +457,9 @@ function ShopkeeperPage() {
                     className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-3"
                   >
                     <div className="min-w-0">
-                      <p className="truncate font-bold">{i.name}</p>
+                      <p className="truncate font-bold">{localizeItem(i.name, lang)}</p>
                       <p className="text-xs text-muted-foreground">
-                        ₹{i.price} / {i.unit} · {timeAgo(new Date(i.updated_at).getTime())}
+                        ₹{i.price} / {localizeUnit(i.unit, lang)} · {timeAgo(new Date(i.updated_at).getTime(), lang)}
                       </p>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
@@ -632,7 +633,7 @@ function ShopkeeperPage() {
 
 function ShopSetup({ onCreated }: { onCreated: (s: DbShop) => void }) {
   const t = useT();
-  useLang();
+  const lang = useLang();
   const { user } = useAuth();
   const [name, setName] = useState("");
   const [category, setCategory] = useState<string>(CATEGORIES[0]);
@@ -822,7 +823,7 @@ function VoiceModal({
   onAdd: (p: ParsedItem) => void;
 }) {
   const t = useT();
-  useLang();
+  const lang = useLang();
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [parsed, setParsed] = useState<ParsedItem | null>(null);
@@ -966,7 +967,7 @@ function ScanModal({
   onAdd: (p: ParsedItem) => void;
 }) {
   const t = useT();
-  useLang();
+  const lang = useLang();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [detected, setDetected] = useState<string | null>(null);
