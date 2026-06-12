@@ -35,7 +35,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { AppHeader } from "@/components/AppHeader";
-import { POPULAR_BY_CATEGORY, CATEGORIES, timeAgo } from "@/lib/mockData";
+import { POPULAR_BY_CATEGORY, CATEGORIES, timeAgo, localizeUnit } from "@/lib/mockData";
+import { localizeItem } from "@/lib/inventoryI18n";
 import { useT, useLang } from "@/lib/i18n";
 import { parseVoiceCommand, type ParsedItem } from "@/lib/voiceParser";
 import { useAuth } from "@/hooks/useAuth";
