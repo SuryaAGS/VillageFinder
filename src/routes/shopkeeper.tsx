@@ -385,7 +385,7 @@ function ShopkeeperPage() {
                   className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-3 shadow-soft"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-bold">{p.name}</p>
+                    <p className="truncate font-bold">{localizeItem(p.name, lang)}</p>
                     <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
                       <span>₹</span>
                       <input
@@ -399,9 +399,9 @@ function ShopkeeperPage() {
                         }}
                         className="w-16 rounded-md border border-border bg-background px-2 py-0.5 font-semibold text-foreground outline-none focus:border-primary"
                       />
-                      <span>/ {p.unit}</span>
+                      <span>/ {localizeUnit(p.unit, lang)}</span>
                       {existing && (
-                        <span>· {timeAgo(new Date(existing.updated_at).getTime())}</span>
+                        <span>· {timeAgo(new Date(existing.updated_at).getTime(), lang)}</span>
                       )}
                     </div>
                   </div>
