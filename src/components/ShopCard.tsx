@@ -15,7 +15,7 @@ import {
   Navigation,
 } from "lucide-react";
 import type { Shop, InventoryItem } from "@/lib/mockData";
-import { timeAgo } from "@/lib/mockData";
+import { timeAgo, localizeCategory, localizeUnit } from "@/lib/mockData";
 import { useT, useLang } from "@/lib/i18n";
 import { localizeItem } from "@/lib/inventoryI18n";
 import { supabase } from "@/integrations/supabase/client";
