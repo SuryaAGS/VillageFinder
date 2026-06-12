@@ -79,7 +79,7 @@ type DbShop = {
 
 function ShopkeeperPage() {
   const t = useT();
-  useLang();
+  const lang = useLang();
   const navigate = useNavigate();
   const { user, role, loading: authLoading } = useAuth();
   const [shop, setShop] = useState<DbShop | null>(null);
@@ -633,7 +633,7 @@ function ShopkeeperPage() {
 
 function ShopSetup({ onCreated }: { onCreated: (s: DbShop) => void }) {
   const t = useT();
-  useLang();
+  const lang = useLang();
   const { user } = useAuth();
   const [name, setName] = useState("");
   const [category, setCategory] = useState<string>(CATEGORIES[0]);
@@ -823,7 +823,7 @@ function VoiceModal({
   onAdd: (p: ParsedItem) => void;
 }) {
   const t = useT();
-  useLang();
+  const lang = useLang();
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [parsed, setParsed] = useState<ParsedItem | null>(null);
@@ -967,7 +967,7 @@ function ScanModal({
   onAdd: (p: ParsedItem) => void;
 }) {
   const t = useT();
-  useLang();
+  const lang = useLang();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [detected, setDetected] = useState<string | null>(null);
