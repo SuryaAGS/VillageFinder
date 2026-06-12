@@ -182,7 +182,7 @@ export function ShopCard({ shop, matchedItems, query, distanceKm, shopCoords }: 
                 <div className="min-w-0">
                   <p className="truncate font-semibold">{localName}</p>
                   <p className="text-xs text-muted-foreground">
-                    ₹{item.price} / {item.unit} · {timeAgo(item.updatedAt)}
+                    ₹{item.price} / {localizeUnit(item.unit, lang)} · {timeAgo(item.updatedAt, lang)}
                   </p>
                 </div>
                 {item.status === "in" ? (
