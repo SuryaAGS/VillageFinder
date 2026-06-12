@@ -196,13 +196,71 @@ export const POPULAR_BY_CATEGORY: Record<string, { name: string; unit: string; d
 
 export const CATEGORIES = Object.keys(POPULAR_BY_CATEGORY);
 
-export function timeAgo(ts: number, now = Date.now()): string {
+type TimeAgoLang = "en" | "te" | "hi";
+
+const TIME_AGO_STRINGS: Record<TimeAgoLang, { now: string; m: (n: number) => string; h: (n: number) => string; d: (n: number) => string }> = {
+  en: {
+    now: "just now",
+    m: (n) => `${n}m ago`,
+    h: (n) => `${n}h ago`,
+    d: (n) => `${n}d ago`,
+  },
+  te: {
+    now: "ఇప్పుడే",
+    m: (n) => `${n} నిమి క్రితం`,
+    h: (n) => `${n} గం క్రితం`,
+    d: (n) => `${n} రోజుల క్రితం`,
+  },
+  hi: {
+    now: "अभी",
+    m: (n) => `${n} मिनट पहले`,
+    h: (n) => `${n} घंटे पहले`,
+    d: (n) => `${n} दिन पहले`,
+  },
+};
+
+export function timeAgo(ts: number, lang: TimeAgoLang = "en", now = Date.now()): string {
+  const s = TIME_AGO_STRINGS[lang] ?? TIME_AGO_STRINGS.en;
   const diff = Math.max(0, now - ts);
   const min = Math.floor(diff / 60_000);
-  if (min < 1) return "just now";
-  if (min < 60) return `${min}m ago`;
+  if (min < 1) return s.now;
+  if (min < 60) return s.m(min);
   const hr = Math.floor(min / 60);
-  if (hr < 24) return `${hr}h ago`;
+  if (hr < 24) return s.h(hr);
   const d = Math.floor(hr / 24);
-  return `${d}d ago`;
+  return s.d(d);
+}
+
+// ---- Category & unit localization ----
+const CATEGORY_MAP: Record<string, Partial<Record<TimeAgoLang, string>>> = {
+  "Kirana / Grocery": { te: "కిరాణా / సరుకులు", hi: "किराना / किराना सामान" },
+  Vegetables: { te: "కూరగాయలు", hi: "सब्ज़ियाँ" },
+  Dairy: { te: "పాల ఉత్పత్తులు", hi: "डेयरी" },
+  "Medical / General": { te: "మెడికల్ / జనరల్", hi: "मेडिकल / जनरल" },
+};
+
+export function localizeCategory(name: string, lang: TimeAgoLang): string {
+  if (lang === "en") return name;
+  return CATEGORY_MAP[name]?.[lang] ?? name;
+}
+
+const UNIT_MAP: Record<string, Partial<Record<TimeAgoLang, string>>> = {
+  kg: { te: "కిలో", hi: "किलो" },
+  g: { te: "గ్రా", hi: "ग्रा" },
+  L: { te: "లీ", hi: "ली" },
+  ml: { te: "మి.లీ", hi: "मि.ली" },
+  pc: { te: "ముక్క", hi: "नग" },
+  pack: { te: "ప్యాక్", hi: "पैक" },
+  sachet: { te: "సాచెట్", hi: "पाउच" },
+  strip: { te: "స్ట్రిప్", hi: "स्ट्रिप" },
+  bunch: { te: "కట్ట", hi: "गुच्छा" },
+  tray: { te: "ట్రే", hi: "ट्रे" },
+};
+
+export function localizeUnit(unit: string, lang: TimeAgoLang): string {
+  if (lang === "en") return unit;
+  const key = unit.trim();
+  if (UNIT_MAP[key]?.[lang]) return UNIT_MAP[key]![lang]!;
+  // e.g. "100ml", "500g", "250g" — leave numeric unit composites as-is.
+  return unit;
 }
