@@ -94,6 +94,10 @@ function ShopkeeperPage() {
   const [deleting, setDeleting] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<DbItem | null>(null);
   const [deletingItem, setDeletingItem] = useState(false);
+  const [invQuery, setInvQuery] = useState("");
+  const [invExpanded, setInvExpanded] = useState(false);
+  const [invListening, setInvListening] = useState(false);
+  const invRecognitionRef = useRef<any>(null);
 
   const deleteItem = async () => {
     if (!itemToDelete) return;
