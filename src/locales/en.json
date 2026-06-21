@@ -178,5 +178,8 @@
   "addLabel": "Add",
   "resultsFor": "Results for",
   "signInToContact": "Sign in to contact this shop",
-  "couldNotRevealContact": "Couldn't reveal the contact. Please try again."
+  "couldNotRevealContact": "Couldn't reveal the contact. Please try again.",
+  "searchInventoryPlaceholder": "Search your inventory…",
+  "voiceErrorPermission": "Microphone permission denied. Please allow mic access.",
+  "voiceErrorGeneric": "Voice search failed. Please try again."
 }
