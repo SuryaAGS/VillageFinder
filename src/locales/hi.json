@@ -178,5 +178,8 @@
   "addLabel": "जोड़ें",
   "resultsFor": "खोज परिणाम",
   "signInToContact": "संपर्क के लिए साइन इन करें",
-  "couldNotRevealContact": "संपर्क नहीं दिखा सके। पुनः प्रयास करें।"
+  "couldNotRevealContact": "संपर्क नहीं दिखा सके। पुनः प्रयास करें।",
+  "searchInventoryPlaceholder": "अपनी इन्वेंट्री खोजें…",
+  "voiceErrorPermission": "माइक्रोफ़ोन अनुमति नहीं मिली। कृपया अनुमति दें।",
+  "voiceErrorGeneric": "वॉइस सर्च विफल। पुनः प्रयास करें।"
 }
