@@ -238,6 +238,83 @@ function ShopkeeperPage() {
     [shop],
   );
 
+  const otherItems = useMemo(
+    () => items.filter((i) => !popular.some((p) => p.name === i.name)),
+    [items, popular],
+  );
+
+  const filteredOther = useMemo(() => {
+    const q = invQuery.trim().toLowerCase();
+    if (!q) return otherItems;
+    return otherItems.filter((i) => {
+      const name = i.name.toLowerCase();
+      const localized = localizeItem(i.name, lang).toLowerCase();
+      return name.includes(q) || localized.includes(q);
+    });
+  }, [otherItems, invQuery, lang]);
+
+  useEffect(() => {
+    setInvExpanded(false);
+  }, [invQuery]);
+
+  const visibleOther = invExpanded ? filteredOther : filteredOther.slice(0, 5);
+
+  const speechSupported =
+    typeof window !== "undefined" &&
+    !!((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition);
+
+  const startInvVoice = () => {
+    if (!speechSupported) return;
+    try {
+      const SR: any =
+        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const rec = new SR();
+      rec.lang = lang === "te" ? "te-IN" : lang === "hi" ? "hi-IN" : "en-IN";
+      rec.interimResults = false;
+      rec.maxAlternatives = 1;
+      rec.continuous = false;
+      rec.onresult = (e: any) => {
+        const transcript = e.results?.[0]?.[0]?.transcript ?? "";
+        if (transcript) setInvQuery(transcript);
+      };
+      rec.onerror = (e: any) => {
+        setInvListening(false);
+        if (e?.error === "not-allowed" || e?.error === "service-not-allowed") {
+          toast.error(t("voiceErrorPermission"));
+        } else {
+          toast.error(t("voiceErrorGeneric"));
+        }
+      };
+      rec.onend = () => setInvListening(false);
+      invRecognitionRef.current = rec;
+      setInvListening(true);
+      rec.start();
+    } catch {
+      setInvListening(false);
+      toast.error(t("voiceErrorGeneric"));
+    }
+  };
+
+  const stopInvVoice = () => {
+    try {
+      invRecognitionRef.current?.stop?.();
+    } catch {
+      /* noop */
+    }
+    setInvListening(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      try {
+        invRecognitionRef.current?.abort?.();
+      } catch {
+        /* noop */
+      }
+    };
+  }, []);
+
+
   const findItem = (name: string) =>
     items.find((i) => i.name.toLowerCase() === name.toLowerCase());
 
