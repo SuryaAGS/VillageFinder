@@ -94,6 +94,10 @@ function ShopkeeperPage() {
   const [deleting, setDeleting] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<DbItem | null>(null);
   const [deletingItem, setDeletingItem] = useState(false);
+  const [invQuery, setInvQuery] = useState("");
+  const [invExpanded, setInvExpanded] = useState(false);
+  const [invListening, setInvListening] = useState(false);
+  const invRecognitionRef = useRef<any>(null);
 
   const deleteItem = async () => {
     if (!itemToDelete) return;
@@ -234,6 +238,83 @@ function ShopkeeperPage() {
     [shop],
   );
 
+  const otherItems = useMemo(
+    () => items.filter((i) => !popular.some((p) => p.name === i.name)),
+    [items, popular],
+  );
+
+  const filteredOther = useMemo(() => {
+    const q = invQuery.trim().toLowerCase();
+    if (!q) return otherItems;
+    return otherItems.filter((i) => {
+      const name = i.name.toLowerCase();
+      const localized = localizeItem(i.name, lang).toLowerCase();
+      return name.includes(q) || localized.includes(q);
+    });
+  }, [otherItems, invQuery, lang]);
+
+  useEffect(() => {
+    setInvExpanded(false);
+  }, [invQuery]);
+
+  const visibleOther = invExpanded ? filteredOther : filteredOther.slice(0, 5);
+
+  const speechSupported =
+    typeof window !== "undefined" &&
+    !!((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition);
+
+  const startInvVoice = () => {
+    if (!speechSupported) return;
+    try {
+      const SR: any =
+        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const rec = new SR();
+      rec.lang = lang === "te" ? "te-IN" : lang === "hi" ? "hi-IN" : "en-IN";
+      rec.interimResults = false;
+      rec.maxAlternatives = 1;
+      rec.continuous = false;
+      rec.onresult = (e: any) => {
+        const transcript = e.results?.[0]?.[0]?.transcript ?? "";
+        if (transcript) setInvQuery(transcript);
+      };
+      rec.onerror = (e: any) => {
+        setInvListening(false);
+        if (e?.error === "not-allowed" || e?.error === "service-not-allowed") {
+          toast.error(t("voiceErrorPermission"));
+        } else {
+          toast.error(t("voiceErrorGeneric"));
+        }
+      };
+      rec.onend = () => setInvListening(false);
+      invRecognitionRef.current = rec;
+      setInvListening(true);
+      rec.start();
+    } catch {
+      setInvListening(false);
+      toast.error(t("voiceErrorGeneric"));
+    }
+  };
+
+  const stopInvVoice = () => {
+    try {
+      invRecognitionRef.current?.stop?.();
+    } catch {
+      /* noop */
+    }
+    setInvListening(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      try {
+        invRecognitionRef.current?.abort?.();
+      } catch {
+        /* noop */
+      }
+    };
+  }, []);
+
+
   const findItem = (name: string) =>
     items.find((i) => i.name.toLowerCase() === name.toLowerCase());
 
@@ -371,6 +452,25 @@ function ShopkeeperPage() {
           </button>
         </motion.div>
 
+        <section className="mt-6 rounded-3xl border border-border bg-card p-5 shadow-soft">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <h2 className="font-display text-lg font-bold">{t("shopStatus")}</h2>
+              <p className="text-sm text-muted-foreground">
+                {shop.is_open === false
+                  ? t("shopClosedDesc")
+                  : t("shopOpenDesc")}
+              </p>
+            </div>
+            <Switch
+              checked={shop.is_open !== false}
+              onCheckedChange={toggleShopStatus}
+              disabled={statusSaving}
+              aria-label={t("toggleShopAria")}
+            />
+          </div>
+        </section>
+
         <section className="mt-6">
           <h2 className="font-display text-xl font-bold">{t("popularItems")}</h2>
           <p className="text-sm text-muted-foreground">{t("tapInStock")}</p>
@@ -445,68 +545,104 @@ function ShopkeeperPage() {
           </ul>
         </section>
 
-        {items.filter((i) => !popular.some((p) => p.name === i.name)).length > 0 && (
+        {otherItems.length > 0 && (
           <section className="mt-8">
             <h2 className="font-display text-xl font-bold">{t("otherItems")}</h2>
-            <ul className="mt-3 space-y-2">
-              {items
-                .filter((i) => !popular.some((p) => p.name === i.name))
-                .map((i) => (
-                  <li
-                    key={i.id}
-                    className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-3"
+
+            <div className="relative mt-3">
+              <input
+                type="search"
+                value={invQuery}
+                onChange={(e) => setInvQuery(e.target.value)}
+                placeholder={t("searchInventoryPlaceholder")}
+                aria-label={t("searchInventoryPlaceholder")}
+                className="w-full rounded-2xl border border-border bg-card px-4 py-3 pr-12 text-sm shadow-soft outline-none focus:border-primary"
+              />
+              {speechSupported && (
+                <button
+                  type="button"
+                  onClick={invListening ? stopInvVoice : startInvVoice}
+                  aria-label={t("listening")}
+                  aria-pressed={invListening}
+                  className={`absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl transition ${
+                    invListening
+                      ? "bg-destructive/10 text-destructive ring-2 ring-destructive animate-pulse"
+                      : "bg-muted text-foreground hover:bg-muted/80"
+                  }`}
+                >
+                  <Mic className="h-4 w-4" />
+                </button>
+              )}
+              {invListening && (
+                <span className="sr-only" aria-live="polite">
+                  {t("listening")}
+                </span>
+              )}
+            </div>
+
+            {filteredOther.length === 0 ? (
+              <p className="mt-4 text-sm text-muted-foreground">{t("noResults")}</p>
+            ) : (
+              <>
+                <ul className="mt-3 space-y-2">
+                  <AnimatePresence initial={false}>
+                    {visibleOther.map((i) => (
+                      <motion.li
+                        key={i.id}
+                        layout
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -4 }}
+                        transition={{ duration: 0.18 }}
+                        className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-3"
+                      >
+                        <div className="min-w-0">
+                          <p className="truncate font-bold">{localizeItem(i.name, lang)}</p>
+                          <p className="text-xs text-muted-foreground">
+                            ₹{i.price} / {localizeUnit(i.unit, lang)} · {timeAgo(new Date(i.updated_at).getTime(), lang)}
+                          </p>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-2">
+                          <button
+                            onClick={() =>
+                              upsertItem(i.name, { status: i.status === "in" ? "out" : "in" })
+                            }
+                            className={`rounded-xl px-3 py-2 text-xs font-bold ${
+                              i.status === "in"
+                                ? "bg-secondary text-secondary-foreground"
+                                : "bg-destructive/10 text-destructive"
+                            }`}
+                          >
+                            {i.status === "in" ? t("inStock") : t("outOfStock")}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setItemToDelete(i)}
+                            aria-label={`Delete ${i.name}`}
+                            className="flex items-center justify-center rounded-xl border border-destructive/20 bg-destructive/5 p-2 text-destructive transition active:scale-95 hover:bg-destructive/10"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </motion.li>
+                    ))}
+                  </AnimatePresence>
+                </ul>
+
+                {filteredOther.length > 5 && (
+                  <button
+                    type="button"
+                    onClick={() => setInvExpanded((v) => !v)}
+                    className="mt-3 inline-flex w-full items-center justify-center rounded-2xl border border-border bg-card px-4 py-2.5 text-sm font-bold text-foreground shadow-soft transition active:scale-[0.98] hover:bg-muted"
                   >
-                    <div className="min-w-0">
-                      <p className="truncate font-bold">{localizeItem(i.name, lang)}</p>
-                      <p className="text-xs text-muted-foreground">
-                        ₹{i.price} / {localizeUnit(i.unit, lang)} · {timeAgo(new Date(i.updated_at).getTime(), lang)}
-                      </p>
-                    </div>
-                    <div className="flex shrink-0 items-center gap-2">
-                      <button
-                        onClick={() =>
-                          upsertItem(i.name, { status: i.status === "in" ? "out" : "in" })
-                        }
-                        className={`rounded-xl px-3 py-2 text-xs font-bold ${
-                          i.status === "in"
-                            ? "bg-secondary text-secondary-foreground"
-                            : "bg-destructive/10 text-destructive"
-                        }`}
-                      >
-                        {i.status === "in" ? t("inStock") : t("outOfStock")}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setItemToDelete(i)}
-                        aria-label={`Delete ${i.name}`}
-                        className="flex items-center justify-center rounded-xl border border-destructive/20 bg-destructive/5 p-2 text-destructive transition active:scale-95 hover:bg-destructive/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </li>
-                ))}
-            </ul>
+                    {invExpanded ? t("showLess") : t("showMore")}
+                  </button>
+                )}
+              </>
+            )}
           </section>
         )}
-        <section className="mt-8 rounded-3xl border border-border bg-card p-5 shadow-soft">
-          <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <h2 className="font-display text-lg font-bold">{t("shopStatus")}</h2>
-              <p className="text-sm text-muted-foreground">
-                {shop.is_open === false
-                  ? t("shopClosedDesc")
-                  : t("shopOpenDesc")}
-              </p>
-            </div>
-            <Switch
-              checked={shop.is_open !== false}
-              onCheckedChange={toggleShopStatus}
-              disabled={statusSaving}
-              aria-label={t("toggleShopAria")}
-            />
-          </div>
-        </section>
+
 
         <section className="mt-12 rounded-3xl border-2 border-destructive/40 bg-destructive/5 p-5">
           <div className="flex items-center gap-2 text-destructive">
