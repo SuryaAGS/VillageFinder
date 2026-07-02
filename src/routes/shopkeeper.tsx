@@ -243,15 +243,25 @@ function ShopkeeperPage() {
     [items, popular],
   );
 
+  const normalizedQuery = invQuery.trim().toLowerCase();
+
+  const filteredPopular = useMemo(() => {
+    if (!normalizedQuery) return popular;
+    return popular.filter((p) => {
+      const name = p.name.toLowerCase();
+      const localized = localizeItem(p.name, lang).toLowerCase();
+      return name.includes(normalizedQuery) || localized.includes(normalizedQuery);
+    });
+  }, [popular, normalizedQuery, lang]);
+
   const filteredOther = useMemo(() => {
-    const q = invQuery.trim().toLowerCase();
-    if (!q) return otherItems;
+    if (!normalizedQuery) return otherItems;
     return otherItems.filter((i) => {
       const name = i.name.toLowerCase();
       const localized = localizeItem(i.name, lang).toLowerCase();
-      return name.includes(q) || localized.includes(q);
+      return name.includes(normalizedQuery) || localized.includes(normalizedQuery);
     });
-  }, [otherItems, invQuery, lang]);
+  }, [otherItems, normalizedQuery, lang]);
 
   useEffect(() => {
     setInvExpanded(false);
@@ -475,8 +485,43 @@ function ShopkeeperPage() {
           <h2 className="font-display text-xl font-bold">{t("popularItems")}</h2>
           <p className="text-sm text-muted-foreground">{t("tapInStock")}</p>
 
+          <div className="relative mt-3">
+            <label htmlFor="inventory-search" className="sr-only">
+              {t("searchInventoryPlaceholder")}
+            </label>
+            <input
+              id="inventory-search"
+              type="search"
+              value={invQuery}
+              onChange={(e) => setInvQuery(e.target.value)}
+              placeholder={t("searchInventoryPlaceholder")}
+              aria-label={t("searchInventoryPlaceholder")}
+              className="w-full rounded-2xl border border-border bg-card px-4 py-3 pr-12 text-sm shadow-soft outline-none focus:border-primary"
+            />
+            {speechSupported && (
+              <button
+                type="button"
+                onClick={invListening ? stopInvVoice : startInvVoice}
+                aria-label={t("listening")}
+                aria-pressed={invListening}
+                className={`absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                  invListening
+                    ? "bg-destructive/10 text-destructive ring-2 ring-destructive animate-pulse"
+                    : "bg-muted text-foreground hover:bg-muted/80"
+                }`}
+              >
+                <Mic className="h-4 w-4" />
+              </button>
+            )}
+            {invListening && (
+              <span className="sr-only" aria-live="polite">
+                {t("listening")}
+              </span>
+            )}
+          </div>
+
           <ul className="mt-3 space-y-2">
-            {popular.map((p) => {
+            {filteredPopular.map((p) => {
               const existing = findItem(p.name);
               const inStock = existing?.status === "in";
               return (
@@ -548,36 +593,6 @@ function ShopkeeperPage() {
         <section className="mt-8">
           <h2 className="font-display text-xl font-bold">{t("otherItems")}</h2>
 
-          <div className="relative mt-3">
-            <input
-              type="search"
-              value={invQuery}
-              onChange={(e) => setInvQuery(e.target.value)}
-              placeholder={t("searchInventoryPlaceholder")}
-              aria-label={t("searchInventoryPlaceholder")}
-              className="w-full rounded-2xl border border-border bg-card px-4 py-3 pr-12 text-sm shadow-soft outline-none focus:border-primary"
-            />
-            {speechSupported && (
-              <button
-                type="button"
-                onClick={invListening ? stopInvVoice : startInvVoice}
-                aria-label={t("listening")}
-                aria-pressed={invListening}
-                className={`absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl transition ${
-                  invListening
-                    ? "bg-destructive/10 text-destructive ring-2 ring-destructive animate-pulse"
-                    : "bg-muted text-foreground hover:bg-muted/80"
-                }`}
-              >
-                <Mic className="h-4 w-4" />
-              </button>
-            )}
-            {invListening && (
-              <span className="sr-only" aria-live="polite">
-                {t("listening")}
-              </span>
-            )}
-          </div>
 
           {filteredOther.length === 0 ? (
             <p className="mt-4 text-sm text-muted-foreground">{t("noResults")}</p>
