@@ -545,103 +545,101 @@ function ShopkeeperPage() {
           </ul>
         </section>
 
-        {otherItems.length > 0 && (
-          <section className="mt-8">
-            <h2 className="font-display text-xl font-bold">{t("otherItems")}</h2>
+        <section className="mt-8">
+          <h2 className="font-display text-xl font-bold">{t("otherItems")}</h2>
 
-            <div className="relative mt-3">
-              <input
-                type="search"
-                value={invQuery}
-                onChange={(e) => setInvQuery(e.target.value)}
-                placeholder={t("searchInventoryPlaceholder")}
-                aria-label={t("searchInventoryPlaceholder")}
-                className="w-full rounded-2xl border border-border bg-card px-4 py-3 pr-12 text-sm shadow-soft outline-none focus:border-primary"
-              />
-              {speechSupported && (
+          <div className="relative mt-3">
+            <input
+              type="search"
+              value={invQuery}
+              onChange={(e) => setInvQuery(e.target.value)}
+              placeholder={t("searchInventoryPlaceholder")}
+              aria-label={t("searchInventoryPlaceholder")}
+              className="w-full rounded-2xl border border-border bg-card px-4 py-3 pr-12 text-sm shadow-soft outline-none focus:border-primary"
+            />
+            {speechSupported && (
+              <button
+                type="button"
+                onClick={invListening ? stopInvVoice : startInvVoice}
+                aria-label={t("listening")}
+                aria-pressed={invListening}
+                className={`absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl transition ${
+                  invListening
+                    ? "bg-destructive/10 text-destructive ring-2 ring-destructive animate-pulse"
+                    : "bg-muted text-foreground hover:bg-muted/80"
+                }`}
+              >
+                <Mic className="h-4 w-4" />
+              </button>
+            )}
+            {invListening && (
+              <span className="sr-only" aria-live="polite">
+                {t("listening")}
+              </span>
+            )}
+          </div>
+
+          {filteredOther.length === 0 ? (
+            <p className="mt-4 text-sm text-muted-foreground">{t("noResults")}</p>
+          ) : (
+            <>
+              <ul className="mt-3 space-y-2">
+                <AnimatePresence initial={false}>
+                  {visibleOther.map((i) => (
+                    <motion.li
+                      key={i.id}
+                      layout
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.18 }}
+                      className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-3"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate font-bold">{localizeItem(i.name, lang)}</p>
+                        <p className="text-xs text-muted-foreground">
+                          ₹{i.price} / {localizeUnit(i.unit, lang)} · {timeAgo(new Date(i.updated_at).getTime(), lang)}
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <button
+                          onClick={() =>
+                            upsertItem(i.name, { status: i.status === "in" ? "out" : "in" })
+                          }
+                          className={`rounded-xl px-3 py-2 text-xs font-bold ${
+                            i.status === "in"
+                              ? "bg-secondary text-secondary-foreground"
+                              : "bg-destructive/10 text-destructive"
+                          }`}
+                        >
+                          {i.status === "in" ? t("inStock") : t("outOfStock")}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setItemToDelete(i)}
+                          aria-label={`Delete ${i.name}`}
+                          className="flex items-center justify-center rounded-xl border border-destructive/20 bg-destructive/5 p-2 text-destructive transition active:scale-95 hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </motion.li>
+                  ))}
+                </AnimatePresence>
+              </ul>
+
+              {filteredOther.length > 5 && (
                 <button
                   type="button"
-                  onClick={invListening ? stopInvVoice : startInvVoice}
-                  aria-label={t("listening")}
-                  aria-pressed={invListening}
-                  className={`absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl transition ${
-                    invListening
-                      ? "bg-destructive/10 text-destructive ring-2 ring-destructive animate-pulse"
-                      : "bg-muted text-foreground hover:bg-muted/80"
-                  }`}
+                  onClick={() => setInvExpanded((v) => !v)}
+                  className="mt-3 inline-flex w-full items-center justify-center rounded-2xl border border-border bg-card px-4 py-2.5 text-sm font-bold text-foreground shadow-soft transition active:scale-[0.98] hover:bg-muted"
                 >
-                  <Mic className="h-4 w-4" />
+                  {invExpanded ? t("showLess") : t("showMore")}
                 </button>
               )}
-              {invListening && (
-                <span className="sr-only" aria-live="polite">
-                  {t("listening")}
-                </span>
-              )}
-            </div>
-
-            {filteredOther.length === 0 ? (
-              <p className="mt-4 text-sm text-muted-foreground">{t("noResults")}</p>
-            ) : (
-              <>
-                <ul className="mt-3 space-y-2">
-                  <AnimatePresence initial={false}>
-                    {visibleOther.map((i) => (
-                      <motion.li
-                        key={i.id}
-                        layout
-                        initial={{ opacity: 0, y: -4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -4 }}
-                        transition={{ duration: 0.18 }}
-                        className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-3"
-                      >
-                        <div className="min-w-0">
-                          <p className="truncate font-bold">{localizeItem(i.name, lang)}</p>
-                          <p className="text-xs text-muted-foreground">
-                            ₹{i.price} / {localizeUnit(i.unit, lang)} · {timeAgo(new Date(i.updated_at).getTime(), lang)}
-                          </p>
-                        </div>
-                        <div className="flex shrink-0 items-center gap-2">
-                          <button
-                            onClick={() =>
-                              upsertItem(i.name, { status: i.status === "in" ? "out" : "in" })
-                            }
-                            className={`rounded-xl px-3 py-2 text-xs font-bold ${
-                              i.status === "in"
-                                ? "bg-secondary text-secondary-foreground"
-                                : "bg-destructive/10 text-destructive"
-                            }`}
-                          >
-                            {i.status === "in" ? t("inStock") : t("outOfStock")}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setItemToDelete(i)}
-                            aria-label={`Delete ${i.name}`}
-                            className="flex items-center justify-center rounded-xl border border-destructive/20 bg-destructive/5 p-2 text-destructive transition active:scale-95 hover:bg-destructive/10"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </motion.li>
-                    ))}
-                  </AnimatePresence>
-                </ul>
-
-                {filteredOther.length > 5 && (
-                  <button
-                    type="button"
-                    onClick={() => setInvExpanded((v) => !v)}
-                    className="mt-3 inline-flex w-full items-center justify-center rounded-2xl border border-border bg-card px-4 py-2.5 text-sm font-bold text-foreground shadow-soft transition active:scale-[0.98] hover:bg-muted"
-                  >
-                    {invExpanded ? t("showLess") : t("showMore")}
-                  </button>
-                )}
-              </>
-            )}
-          </section>
-        )}
+            </>
+          )}
+        </section>
 
 
         <section className="mt-12 rounded-3xl border-2 border-destructive/40 bg-destructive/5 p-5">
