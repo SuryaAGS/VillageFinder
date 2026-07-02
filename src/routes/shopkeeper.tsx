@@ -243,15 +243,25 @@ function ShopkeeperPage() {
     [items, popular],
   );
 
+  const normalizedQuery = invQuery.trim().toLowerCase();
+
+  const filteredPopular = useMemo(() => {
+    if (!normalizedQuery) return popular;
+    return popular.filter((p) => {
+      const name = p.name.toLowerCase();
+      const localized = localizeItem(p.name, lang).toLowerCase();
+      return name.includes(normalizedQuery) || localized.includes(normalizedQuery);
+    });
+  }, [popular, normalizedQuery, lang]);
+
   const filteredOther = useMemo(() => {
-    const q = invQuery.trim().toLowerCase();
-    if (!q) return otherItems;
+    if (!normalizedQuery) return otherItems;
     return otherItems.filter((i) => {
       const name = i.name.toLowerCase();
       const localized = localizeItem(i.name, lang).toLowerCase();
-      return name.includes(q) || localized.includes(q);
+      return name.includes(normalizedQuery) || localized.includes(normalizedQuery);
     });
-  }, [otherItems, invQuery, lang]);
+  }, [otherItems, normalizedQuery, lang]);
 
   useEffect(() => {
     setInvExpanded(false);
