@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
       ...base,
       links: [
         ...(base.links ?? []),
-        { rel: "preload", as: "image", href: heroImg, fetchpriority: "high" },
+        { rel: "preload", as: "image", href: heroImg, fetchPriority: "high" },
       ],
     };
   },

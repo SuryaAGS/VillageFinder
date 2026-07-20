@@ -12,6 +12,7 @@ import { LocationHelpDialog } from "@/components/LocationHelpDialog";
 import { HelpCircle } from "lucide-react";
 import { useT, useLang, getLang } from "@/lib/i18n";
 import { useAuth } from "@/hooks/useAuth";
+import AIChat from "@/components/AIChat";
 import { supabase } from "@/integrations/supabase/client";
 import { showFriendlyError } from "@/lib/friendlyError";
 import { aiSuggestItems } from "@/lib/aiSuggest.functions";
@@ -696,6 +697,7 @@ function CustomerPage() {
           </div>
         )}
       </main>
+      <AIChat />
     </div>
   );
 }
