@@ -1,58 +1,35 @@
-# Shopkeeper Dashboard Inventory Improvements
+# Plan: Fix production build env injection (deployment/platform only)
 
-Update `src/routes/shopkeeper.tsx` only. No backend or schema changes. Preserve existing styling, tokens, and mobile responsiveness.
+Scope: deployment/build environment only. No changes to React, TypeScript, Supabase integration files, or any application source code.
 
-## 1. Reorder sections
+## Steps for tomorrow
 
-Move the existing **Shop Status** card (currently at lines ~492–509) to render directly below the header/summary card and above **Popular Items**.
+1. **Re-verify env presence at build time**
+   - Confirm `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` are still set in the project's build environment (not just the sandbox shell).
+   - Confirm `.env` still exists in the project root and contains both `VITE_*` keys (it is gitignored, which is expected — Lovable's build worker reads from the project workspace, not Git).
 
-New top-to-bottom order on the page:
-1. Shop summary/header card (unchanged)
-2. Shop Status card (moved up, content unchanged)
-3. Popular Items section (unchanged)
-4. Inventory search bar (new)
-5. Inventory items list = current "Other Items" list, now controlled by search + show-more
-6. Danger Zone (unchanged)
+2. **Diagnose why the build worker sees empty values**
+   - Inspect the current published bundle again to confirm `var Ji = {}` is still the symptom.
+   - Check whether `.env` is present in the workspace snapshot used by the publish worker (versus only in the running dev sandbox).
+   - Check `@lovable.dev/vite-tanstack-config` version and its env-loading behavior for the publish/Cloudflare build mode.
 
-## 2. Inventory search bar (with voice)
+3. **Fix the environment**
+   - If `.env` is missing from the publish workspace: restore it with the two `VITE_*` values so Vite's `loadEnv` picks them up during the production build.
+   - If `.env` is present but not loaded: escalate as a platform issue with the exact evidence (bundle hash, missing keys, wrapper version).
+   - Do not edit `vite.config.ts`, `src/integrations/supabase/client.ts`, or any application file.
 
-Render between Popular Items and the inventory list. Heading stays as `t("otherItems")` above the list; the search bar sits just below that heading.
+4. **Republish and verify**
+   - Trigger a fresh publish.
+   - Fetch the new bundle from `https://villagefinder.lovable.app/` and grep the built `useAuth-*.js` (or equivalent) for the Supabase URL substring `cxmqtsucyvznfaxnvkse` to confirm `Ji` is now populated instead of `{}`.
+   - Load the site and confirm no "Missing Supabase environment variables" runtime error.
 
-- Input: controlled `query` state, `placeholder` from a new locale key `searchInventoryPlaceholder` (EN/HI/TE).
-- Mic button inside the input (right side), uses `lucide-react` `Mic` / `MicOff`.
-- Filtering: case-insensitive match against `i.name` AND `localizeItem(i.name, lang)` so users can type in their UI language. Filter is applied to the "other items" list (items not already in Popular).
-- Debounce not required (lists are small); use `useMemo` for filtered list to avoid re-renders.
+## Explicit non-goals
 
-### Voice search (Web Speech API)
+- No edits to `src/**`, `vite.config.ts`, `package.json`, `wrangler.jsonc`, or Supabase client code.
+- No schema or RLS changes.
+- No security scan changes.
 
-- Feature-detect `window.SpeechRecognition || window.webkitSpeechRecognition`. If absent, hide the mic button.
-- Map `lang` → recognition language: `en`→`en-IN`, `hi`→`hi-IN`, `te`→`te-IN`.
-- On mic click: start recognition, set `listening=true`, show pulsing red ring around the mic + visually-hidden "Listening…" text (`aria-live="polite"`).
-- `onresult`: set query to the final transcript; list updates via existing memo.
-- `onerror` / permission denied: toast a friendly message (`voiceErrorPermission` / `voiceErrorGeneric` locale keys) and reset state.
-- `onend`: clear `listening`.
-- Cleanup recognition on unmount and on language change (recreate instance when `lang` changes).
-- Accessibility: `aria-label` on input ("Search inventory"), `aria-pressed` on mic button, focus ring preserved.
+## Success criteria
 
-## 3. Show More / Show Less
-
-- Add `expanded` state (default `false`).
-- `visibleItems = expanded ? filtered : filtered.slice(0, 5)`.
-- Render button below the list only when `filtered.length > 5`. Text toggles between `showMore` / `showLess` locale keys.
-- Smooth transition: use `framer-motion` (already imported) `AnimatePresence` + `motion.li` with `layout` for the appearing/disappearing items, or a simple `transition-all` height — choose `layout` animation for consistency with the existing motion usage.
-- Reset `expanded` to `false` whenever `query` changes so newly filtered results start collapsed.
-
-## Locale keys to add (EN/HI/TE in `src/locales/*.json`)
-
-- `searchInventoryPlaceholder`
-- `showMore`, `showLess`
-- `listening`
-- `voiceErrorPermission`, `voiceErrorGeneric`
-- `voiceNotSupported` (used as mic button tooltip when API missing — though button is hidden)
-
-## Technical notes
-
-- All changes confined to `src/routes/shopkeeper.tsx` plus three locale JSON files.
-- No changes to data fetching, RLS, RPCs, or Popular Items behavior.
-- Mobile: search input is full-width with mic absolutely positioned right; existing `max-w-2xl` container preserved.
-- Use existing tokens (`bg-card`, `border-border`, `rounded-2xl`, `shadow-soft`) — no hardcoded colors.
+- Published `https://villagefinder.lovable.app/` loads without the Supabase env error.
+- The production JS bundle contains the real Supabase URL and publishable key values (not `{}`).
