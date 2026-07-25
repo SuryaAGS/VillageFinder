@@ -7,75 +7,46 @@ import type { Database } from './types'
 export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server(
   async ({ next }) => {
 
-    console.log("========== AUTH MIDDLEWARE START ==========");
-
     const SUPABASE_URL = process.env.SUPABASE_URL;
     const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
-    const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-
-    console.log("SUPABASE_URL:", SUPABASE_URL);
-    console.log(
-      "SUPABASE_PUBLISHABLE_KEY exists:",
-      !!SUPABASE_PUBLISHABLE_KEY
-    );
-    console.log("OPENROUTER_API_KEY exists:", !!OPENROUTER_API_KEY);
 
     if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-      console.error("❌ Missing Supabase environment variables");
-
       throw new Response(
-        "Missing Supabase environment variables. Ensure SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY are set.",
+        'Missing Supabase environment variables. Ensure SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY are set.',
         { status: 500 }
       );
     }
 
     const request = getRequest();
 
-    console.log("Request exists:", !!request);
-
     if (!request?.headers) {
-      console.error("❌ No request headers");
-
       throw new Response(
-        "Unauthorized: No request headers available",
+        'Unauthorized: No request headers available',
         { status: 401 }
       );
     }
 
-    const authHeader = request.headers.get("authorization");
-
-    console.log(
-      "Authorization Header Exists:",
-      !!authHeader
-    );
+    const authHeader = request.headers.get('authorization');
 
     if (!authHeader) {
-      console.error("❌ Authorization header missing");
-
       throw new Response(
-        "Unauthorized: No authorization header provided",
+        'Unauthorized: No authorization header provided',
         { status: 401 }
       );
     }
 
-    if (!authHeader.startsWith("Bearer ")) {
-      console.error("❌ Invalid Authorization Header");
-
+    if (!authHeader.startsWith('Bearer ')) {
       throw new Response(
-        "Unauthorized: Only Bearer tokens are supported",
+        'Unauthorized: Only Bearer tokens are supported',
         { status: 401 }
       );
     }
 
-    const token = authHeader.replace("Bearer ", "");
-
-    console.log("Token Exists:", !!token);
+    const token = authHeader.replace('Bearer ', '');
 
     if (!token) {
-      console.error("❌ Token missing");
-
       throw new Response(
-        "Unauthorized: No token provided",
+        'Unauthorized: No token provided',
         { status: 401 }
       );
     }
@@ -97,33 +68,21 @@ export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server
       }
     );
 
-    console.log("Supabase client created");
-
     const { data, error } = await supabase.auth.getClaims(token);
 
-    console.log("getClaims error:", error);
-    console.log("Claims data:", data);
-
     if (error || !data?.claims) {
-      console.error("❌ Invalid token");
-
       throw new Response(
-        "Unauthorized: Invalid token",
+        'Unauthorized: Invalid token',
         { status: 401 }
       );
     }
 
     if (!data.claims.sub) {
-      console.error("❌ No user ID found");
-
       throw new Response(
-        "Unauthorized: No user ID found in token",
+        'Unauthorized: No user ID found in token',
         { status: 401 }
       );
     }
-
-    console.log("Authenticated User:", data.claims.sub);
-    console.log("========== AUTH MIDDLEWARE SUCCESS ==========");
 
     return next({
       context: {
